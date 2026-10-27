@@ -1,0 +1,901 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Inisialisasi proyek Vite + React 18 + TypeScript dan Amplify Gen2": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091654771
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091671856
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092624275
+      }
+    ],
+    "1.2 Buat konfigurasi lingkungan dan region default": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655014
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092631793
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092685392
+      }
+    ],
+    "2.1 Buat tipe bersama dan helper pemilik": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655124
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092632242
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092686353
+      }
+    ],
+    "2.2 Implementasi `money.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655272
+      }
+    ],
+    "2.3 Tulis uji properti format Rupiah": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655396
+      }
+    ],
+    "2.4 Tulis uji properti penafsiran nominal singkat": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655535
+      }
+    ],
+    "2.5 Tulis uji properti validasi nominal": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655631
+      }
+    ],
+    "2.6 Implementasi `dates.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655695
+      }
+    ],
+    "2.7 Tulis uji properti tanggal WIB": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655771
+      }
+    ],
+    "3.1 Implementasi `ledger.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655845
+      }
+    ],
+    "3.2 Tulis uji properti saldo Dompet": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091655929
+      }
+    ],
+    "3.3 Tulis uji properti transfer dan setoran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656014
+      }
+    ],
+    "3.4 Implementasi `budget.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656080
+      }
+    ],
+    "3.5 Tulis uji properti realisasi anggaran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656158
+      }
+    ],
+    "3.6 Tulis uji properti salin anggaran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656315
+      }
+    ],
+    "3.7 Implementasi `recurring.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656394
+      }
+    ],
+    "3.8 Tulis uji properti jatuh tempo berulang": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656480
+      }
+    ],
+    "3.9 Implementasi `goals.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656557
+      }
+    ],
+    "3.10 Tulis uji properti Target_Tabungan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656627
+      }
+    ],
+    "3.11 Implementasi `report.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656697
+      }
+    ],
+    "3.12 Tulis uji properti total laporan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656767
+      }
+    ],
+    "3.13 Tulis uji properti bucket tren": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656830
+      }
+    ],
+    "3.14 Implementasi `filters.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656897
+      }
+    ],
+    "3.15 Tulis uji properti filter transaksi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091656963
+      }
+    ],
+    "3.16 Tulis uji properti urutan dan halaman": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657032
+      }
+    ],
+    "3.17 Implementasi `csv.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657110
+      }
+    ],
+    "3.18 Tulis uji properti CSV": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657246
+      }
+    ],
+    "4.1 Implementasi `ai-validate.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657312
+      }
+    ],
+    "4.2 Tulis uji properti hasil AI tidak valid": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657381
+      }
+    ],
+    "4.3 Tulis uji properti validasi unggahan struk": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657447
+      }
+    ],
+    "4.4 Tulis uji properti nominal pada jawaban asisten": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657528
+      }
+    ],
+    "4.5 Implementasi `rate-limit.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657596
+      }
+    ],
+    "4.6 Tulis uji properti pembatas pemakaian (logika murni)": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657664
+      }
+    ],
+    "4.7 Implementasi `redact.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657732
+      }
+    ],
+    "4.8 Tulis uji properti log": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657809
+      }
+    ],
+    "4.9 Implementasi `notify.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657884
+      }
+    ],
+    "4.10 Tulis uji properti notifikasi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091657955
+      }
+    ],
+    "5. Checkpoint - Pastikan semua uji lulus": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658024
+      }
+    ],
+    "6.1 Definisikan autentikasi di `amplify/auth/resource.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658097
+      }
+    ],
+    "6.2 Definisikan penyimpanan di `amplify/storage/resource.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658164
+      }
+    ],
+    "6.3 Definisikan resource fungsi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658234
+      }
+    ],
+    "6.4 Definisikan skema data di `amplify/data/resource.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658322
+      }
+    ],
+    "6.5 Rangkai `amplify/backend.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658397
+      }
+    ],
+    "6.6 Implementasi `post-confirmation`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658533
+      }
+    ],
+    "6.7 Tulis uji unit `post-confirmation`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658611
+      }
+    ],
+    "7.1 Buat lapisan repositori": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658678
+      }
+    ],
+    "7.2 Buat helper notifikasi, push, dan evaluasi ambang anggaran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658745
+      }
+    ],
+    "7.3 Implementasi operasi transaksi dan transfer": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658812
+      }
+    ],
+    "7.4 Implementasi operasi Dompet dan Kategori": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658894
+      }
+    ],
+    "7.5 Implementasi operasi Anggaran, aturan berulang, dan Target_Tabungan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091658962
+      }
+    ],
+    "7.6 Rangkai `ledger/handler.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659031
+      }
+    ],
+    "7.7 Tulis uji properti notifikasi ambang anggaran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659112
+      }
+    ],
+    "7.8 Tulis uji properti keunikan dan reassign": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659181
+      }
+    ],
+    "7.9 Tulis uji properti isolasi pemilik pada ledger": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659256
+      }
+    ],
+    "8.1 Implementasi `model-resolver.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659321
+      }
+    ],
+    "8.2 Tulis uji properti resolver model": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659395
+      }
+    ],
+    "8.3 Buat klien Bedrock dan `prompts.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659525
+      }
+    ],
+    "8.4 Implementasi pembatas pemakaian": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659615
+      }
+    ],
+    "8.5 Implementasi `parseNaturalInput`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659694
+      }
+    ],
+    "8.6 Implementasi `createReceiptUpload` dan `scanReceipt`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659765
+      }
+    ],
+    "8.7 Implementasi `askAssistant`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659847
+      }
+    ],
+    "8.8 Rangkai `ai-gateway/handler.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659914
+      }
+    ],
+    "8.9 Tulis uji pembatas pemakaian terintegrasi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091659984
+      }
+    ],
+    "8.10 Tulis uji properti isolasi konteks AI": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660070
+      }
+    ],
+    "8.11 Tulis uji unit handler tanpa identitas": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660146
+      }
+    ],
+    "9. Checkpoint - Pastikan semua uji lulus": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660213
+      }
+    ],
+    "10.1 Implementasi `recurring-runner`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660290
+      }
+    ],
+    "10.2 Tulis uji properti idempotensi pembuatan transaksi berulang": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660349
+      }
+    ],
+    "10.3 Implementasi `weekly-insight`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660421
+      }
+    ],
+    "10.4 Tulis uji properti isi Wawasan_Mingguan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660489
+      }
+    ],
+    "11. Checkpoint - Pastikan semua uji lulus": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660554
+      }
+    ],
+    "12.1 Buat kerangka aplikasi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660652
+      }
+    ],
+    "12.2 Tulis uji pemetaan galat login dan route guard": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660763
+      }
+    ],
+    "12.3 Buat komponen bersama dan hook data": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660831
+      }
+    ],
+    "12.4 Halaman Dompet dan Kategori": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660907
+      }
+    ],
+    "12.5 Halaman Transaksi": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091660973
+      }
+    ],
+    "12.6 Halaman Anggaran": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661045
+      }
+    ],
+    "12.7 Halaman Transaksi Berulang dan Target Tabungan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661115
+      }
+    ],
+    "12.8 Halaman Beranda": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661181
+      }
+    ],
+    "12.9 Halaman Laporan dan ekspor": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661248
+      }
+    ],
+    "12.10 Input bahasa alami dan pemindai struk": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661315
+      }
+    ],
+    "12.11 Halaman Asisten": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661377
+      }
+    ],
+    "12.12 Halaman Wawasan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661454
+      }
+    ],
+    "12.13 Halaman Notifikasi dan Pengaturan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661523
+      }
+    ],
+    "12.14 Rangkai rute dan pemecahan kode": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661595
+      }
+    ],
+    "12.15 Tulis uji UI contoh": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661661
+      }
+    ],
+    "12.16 Tulis uji aksesibilitas dan tata letak": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661743
+      }
+    ],
+    "13.1 Konfigurasi `vite-plugin-pwa`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661824
+      }
+    ],
+    "13.2 Siapkan Lighthouse CI": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661904
+      }
+    ],
+    "14.1 Buat `scripts/verify-bedrock.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091661974
+      }
+    ],
+    "14.2 Hubungkan skrip ke build": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662045
+      }
+    ],
+    "15. Checkpoint - Backend, domain, dan frontend dasar lulus uji": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662115
+      }
+    ],
+    "16.1 Siapkan repositori dan dorong cabang fitur pertama": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662189
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092701106
+      }
+    ],
+    "16.2 Tambahkan pemindaian rahasia dan alur CI dasar": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662254
+      }
+    ],
+    "17.1 Buat `src/theme/tokens.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662323
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092632337
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092687165
+      }
+    ],
+    "17.2 Buat `scripts/generate-theme-css.ts` dan `src/theme/tokens.css`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662481
+      }
+    ],
+    "17.3 Buat `src/theme/global.css` dengan Latar_Gradien dan permukaan": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662558
+      }
+    ],
+    "17.4 Tulis uji properti variabel CSS": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662632
+      }
+    ],
+    "18.1 Implementasi `shared/domain/contrast.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662708
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092632584
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092688012
+      }
+    ],
+    "18.2 Tulis uji properti kebenaran helper kontras": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662781
+      }
+    ],
+    "18.3 Tulis uji properti kontras token": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662864
+      }
+    ],
+    "18.4 Tulis uji properti kontras Permukaan_Kaca": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091662942
+      }
+    ],
+    "18.5 Implementasi `shared/domain/motion.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663021
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092633186
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092688311
+      }
+    ],
+    "18.6 Tulis uji properti batas durasi gerak": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663096
+      }
+    ],
+    "18.7 Tulis uji properti Gerak_Berkurang": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663167
+      }
+    ],
+    "18.8 Implementasi `shared/domain/sheet.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663247
+      },
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092700923
+      }
+    ],
+    "18.9 Tulis uji properti keputusan menutup Lembar_Bawah": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663323
+      }
+    ],
+    "19.1 Terapkan tumpukan font dan Inter lewat `@fontsource`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663404
+      }
+    ],
+    "19.2 Buat penjaga CI `scripts/check-no-sf-fonts.ts`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663479
+      }
+    ],
+    "19.3 Tulis uji untuk penjaga font dan tumpukan font": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663606
+      }
+    ],
+    "20.1 Buat `useReducedMotion`, `motion.css`, dan `navigateWithTransition`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663705
+      }
+    ],
+    "20.2 Buat `GlassBar`, `SoftCard`, `LargeTitle`, dan `Skeleton`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663766
+      }
+    ],
+    "20.3 Buat `BottomSheet`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663840
+      }
+    ],
+    "20.4 Buat `QuickAddFab`": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663915
+      }
+    ],
+    "20.5 Tulis uji komponen": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091663988
+      }
+    ],
+    "20.6 Tulis uji Playwright Gerak_Berkurang": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091664056
+      }
+    ],
+    "21. Checkpoint akhir Design System dan repositori": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793091664122
+      }
+    ],
+    "1. Scaffold proyek dan konfigurasi dasar": [
+      {
+        "executionId": "87dc9f54-0f2a-440c-85fa-98b137ec4248",
+        "chatSessionId": "sess_299cd56d-8d66-4e74-bcd9-a2d5f67dd1bd",
+        "timestamp": 1793092685506
+      }
+    ]
+  }
+}
