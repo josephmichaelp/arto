@@ -150,14 +150,18 @@ grantTable(aiGatewayFn, 'Goal', 'r');
 
 // --- Tabel AiUsage (khusus fungsi, dengan TTL) -----------------------------
 
-const aiUsageStack = backend.createStack('AiUsageStack');
+// Tabel ini dibuat di dalam stack fungsi `ai-gateway` (bukan stack
+// terpisah) untuk menghindari dependensi sirkular antar-stack:
+// `grantReadWriteData` membuat stack tabel bergantung pada role fungsi,
+// sementara `addEnvironment` membuat stack fungsi bergantung pada nama
+// tabel. Keduanya kini intra-stack.
 
 /**
  * Tabel pembatas pemakaian AI: kunci `USAGE#<sub>#<hourBucket>`, atribut
  * `count`, `ttl` (design.md, Requirement 16.3). TTL mengosongkan item lama
  * otomatis; `PAY_PER_REQUEST` karena pola akses berdurasi singkat dan jarang.
  */
-const aiUsageTable = new dynamodb.Table(aiUsageStack, 'AiUsageTable', {
+const aiUsageTable = new dynamodb.Table(Stack.of(aiGatewayFn), 'AiUsageTable', {
   partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
   billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
   timeToLiveAttribute: 'ttl',

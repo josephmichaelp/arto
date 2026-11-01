@@ -56,8 +56,11 @@ const tokensArb: fc.Arbitrary<Tokens> = fc.record({
 
 describe("generate-theme-css - Property 33: Variabel CSS sama dengan token", () => {
   it("contoh: tokens.css yang dikomit sinkron dengan hasil generateCssVariables", () => {
-    const committed = readFileSync(TOKENS_CSS_PATH, "utf8");
-    expect(committed).toBe(generateCssVariables(tokens));
+    // Akhiran baris dinormalkan: `core.autocrlf` di Windows menulis CRLF ke
+    // working tree, sedangkan generator selalu memakai LF. Yang diuji adalah
+    // kesamaan isi, bukan akhiran barisnya.
+    const committed = readFileSync(TOKENS_CSS_PATH, "utf8").replace(/\r\n/g, "\n");
+    expect(committed).toBe(generateCssVariables(tokens).replace(/\r\n/g, "\n"));
   });
 
   it("contoh: flattenTokensToCssVars menghasilkan tepat satu variabel per Warna_Merek", () => {
