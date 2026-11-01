@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Install, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Check theme CSS is in sync
+        run: npm run check:theme
+
+      - name: Check no SF font files are committed
+        run: npm run check:fonts
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  secret-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+      - name: Reject embedded credentials in remote URL or tracked files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Fail if any configured remote URL contains userinfo-style embedded credentials
+          # (e.g. https://<token>@github.com/... or https://user:pass@host/...).
+          if git remote -v | grep -E 'https?://[^/[:space:]]*[@:][^/[:space:]]*@' > /dev/null; then
+            echo "::error::A git remote URL appears to contain embedded credentials (userinfo before '@')."
+            git remote -v | grep -E 'https?://[^/[:space:]]*[@:][^/[:space:]]*@' || true
+            exit 1
+          fi
+
+          # Fail if any tracked file contains an embedded-credential URL pattern,
+          # such as https://<token>@github.com or https://user:pass@host.
+          pattern='https?://[A-Za-z0-9._~+/-]+(:[A-Za-z0-9._~+/-]+)?@[A-Za-z0-9.-]+'
+          matches="$(git grep -I -n -E "$pattern" -- . ':(exclude).github/workflows/ci.yml' || true)"
+          if [ -n "$matches" ]; then
+            echo "::error::Found a credential-like embedded URL pattern (https://<token>@host) in tracked files."
+            echo "$matches"
+            exit 1
+          fi
+
+          echo "No embedded credentials found in remote URLs or tracked files."
+
+  lighthouse:
+    name: Lighthouse CI
+    # Run only on pull requests and manual triggers so it never blocks a plain push.
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run Lighthouse CI
+        run: npx lhci autorun
+        env:
+          # Suppress the LHCI "no token" warning; we use filesystem upload.
+          LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
