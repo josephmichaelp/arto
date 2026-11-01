@@ -15,4 +15,5 @@ import { defineFunction } from '@aws-amplify/backend';
 export const ledger = defineFunction({
   name: 'ledger',
   entry: './handler.ts',
+  resourceGroupName: 'data',
 });

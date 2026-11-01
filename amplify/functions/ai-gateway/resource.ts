@@ -18,6 +18,7 @@ import { defineFunction } from '@aws-amplify/backend';
 export const aiGateway = defineFunction({
   name: 'ai-gateway',
   entry: './handler.ts',
+  resourceGroupName: 'data',
   timeoutSeconds: 25,
   environment: {
     BEDROCK_REGION: 'ap-southeast-3',
