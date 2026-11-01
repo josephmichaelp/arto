@@ -1,0 +1,32 @@
+# Dependencies and build output
+node_modules/
+dist/
+.amplify/
+amplify_outputs*.json
+amplify_outputs*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+aws-credentials*
+credentials
+credentials.json
+.npmrc
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+*.lcov
+.nyc_output/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

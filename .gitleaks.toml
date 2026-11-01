@@ -1,0 +1,18 @@
+title = "Arto gitleaks config"
+
+# Start from gitleaks' built-in default rule set and only narrow the allowlist,
+# instead of redefining every rule from scratch.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Narrow allowlist: only .env.example and clearly-fake test fixtures"
+paths = [
+  '''(^|/)\.env\.example$''',
+]
+
+# Clearly-fake, non-functional placeholder values used only in test fixtures/examples.
+# Keep this list narrow and explicit; do not add real-looking secrets here.
+regexes = [
+  '''FAKE_TEST_[A-Z0-9_]*''',
+]

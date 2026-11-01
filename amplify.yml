@@ -1,0 +1,37 @@
+version: 1
+env:
+  variables:
+    AWS_REGION: ap-southeast-1
+    BEDROCK_REGION: ap-southeast-3
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci
+        # Pra-deploy produksi (Requirement 16.1, 16.5): verifikasi akses Bedrock
+        # Nova Lite dengan kredensial akun target. Bila verify-bedrock.ts keluar
+        # non-nol, langkah ini gagal dan deploy produksi diblokir. Cabang non-
+        # produksi melewati pemeriksaan ini.
+        - |
+          if [ "$AWS_BRANCH" = "main" ]; then
+            echo "Produksi ($AWS_BRANCH): verifikasi akses Bedrock Nova Lite sebelum deploy"
+            npm run verify:bedrock
+          else
+            echo "Lewati verify:bedrock untuk cabang non-produksi: $AWS_BRANCH"
+          fi
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

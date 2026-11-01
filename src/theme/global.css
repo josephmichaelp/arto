@@ -1,0 +1,135 @@
+/**
+ * Gaya global Design System Arto (Req 17.9, 17.11, 17.12, 18.7, 18.8).
+ * Memakai variabel CSS dari `tokens.css` (jangan duplikasi nilai warna di sini).
+ *
+ * Aturan wajib: teks TIDAK PERNAH diletakkan langsung di atas Latar_Gradien.
+ * Semua teks harus berada di dalam `.soft-card` atau `.glass` agar rasio
+ * kontras minimal 4,5:1 terjaga (Req 18.8, lihat shared/domain/contrast.ts).
+ */
+
+@import './tokens.css';
+
+:root {
+  /*
+   * Tipografi (Req 18.1, 18.2). Tumpukan font menaruh San Francisco (SF)
+   * lebih dulu untuk perangkat Apple lewat font sistem (-apple-system,
+   * BlinkMacSystemFont, "SF Pro *"), lalu Inter (dari @fontsource-variable/inter,
+   * lihat theme/fonts.ts) untuk non-Apple, diakhiri system-ui/sans-serif.
+   * TIDAK ADA berkas atau @font-face font SF di repositori (Req 18.3, 18.4).
+   */
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'SF Pro Rounded',
+    'Inter', system-ui, sans-serif;
+
+  /* Skala tipografi (px): judul besar / judul / isi / caption (Req 18.1) */
+  --font-size-title-xl: 34px;
+  --font-size-title: 22px;
+  --font-size-body: 17px;
+  --font-size-caption: 13px;
+
+  /* Durasi gerak (ms), selaras dengan shared/domain/motion.ts MOTION_TOKENS */
+  --dur-micro: 180ms;
+  --dur-page-enter: 300ms;
+  --dur-page-exit: 200ms;
+  --dur-sheet-open: 280ms;
+  --dur-sheet-close: 220ms;
+
+  /* Kurva gerak, selaras dengan shared/domain/motion.ts EASE_* */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+}
+
+/*
+ * Gerak_Berkurang (Req 17.11): semua durasi dipangkas ke pudar instan,
+ * paling lama 100 ms (selaras REDUCED_MAX_MS pada shared/domain/motion.ts).
+ * `useReducedMotion` memasang `data-motion="reduced"` pada <html>; media
+ * query di sini adalah jaring pengaman bila skrip belum berjalan.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 80ms;
+    --dur-page-enter: 80ms;
+    --dur-page-exit: 80ms;
+    --dur-sheet-open: 80ms;
+    --dur-sheet-close: 80ms;
+  }
+}
+
+[data-motion='reduced'] {
+  --dur-micro: 80ms;
+  --dur-page-enter: 80ms;
+  --dur-page-exit: 80ms;
+  --dur-sheet-open: 80ms;
+  --dur-sheet-close: 80ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  /* Angka tabular agar nominal Rupiah selaras rata kolom (Req 18.2) */
+  font-feature-settings: 'tnum' 1;
+  font-size: var(--font-size-body);
+  color: var(--color-ink);
+  background-color: var(--color-brand-oat);
+}
+
+/*
+ * Latar_Gradien (Req 18.7): mesh radial-gradient Oat/Biru/Merah_Muda tetap
+ * di belakang seluruh konten. `position: fixed` + `z-index: -1` dipakai,
+ * BUKAN `background-attachment: fixed`, karena tidak andal di Safari iOS.
+ *
+ * Nilai posisi/ukuran/alpha berikut adalah pendekatan turunan dari
+ * `src/theme/tokens.ts` (export `mesh`) dan MENUNGGU KONFIRMASI PEMILIK
+ * bersama ketiga Warna_Merek. Bila `mesh` di tokens.ts berubah, perbarui
+ * nilai di bawah agar tetap sinkron.
+ */
+#app-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 12% 8%, rgba(0, 93, 172, 0.35) 0%, rgba(0, 93, 172, 0) 55%),
+    radial-gradient(circle at 88% 22%, rgba(242, 184, 198, 0.55) 0%, rgba(242, 184, 198, 0) 50%),
+    radial-gradient(circle at 70% 88%, rgba(0, 93, 172, 0.2) 0%, rgba(0, 93, 172, 0) 60%),
+    radial-gradient(circle at 10% 80%, rgba(242, 184, 198, 0.4) 0%, rgba(242, 184, 198, 0) 45%);
+  background-color: var(--color-brand-oat);
+}
+
+/*
+ * Kartu_Lembut (Req 17.9): radius sudut minimal 16 px (variabel >= 20 px).
+ * Permukaan solid opak, jadi teks di dalamnya selalu memenuhi kontras.
+ */
+.soft-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+}
+
+/*
+ * Permukaan_Kaca (Req 17.12): fallback solid semi-opak dulu (aman untuk
+ * peramban tanpa dukungan blur), lalu ditingkatkan lewat `@supports` bila
+ * `backdrop-filter`/`-webkit-backdrop-filter` tersedia. Maksimal tiga
+ * lapisan `.glass` per layar demi performa 60 fps pada ponsel kelas menengah.
+ */
+.glass {
+  background: rgba(255, 255, 255, var(--glass-alphaFallback));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: rgba(255, 255, 255, var(--glass-alpha));
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+  }
+}
