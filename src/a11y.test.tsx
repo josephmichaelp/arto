@@ -20,6 +20,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { AuthenticatedLayout } from './AuthenticatedLayout';
 import { EmptyState } from './components/EmptyState';
@@ -64,27 +65,40 @@ const AXE_OPTIONS = {
 
 afterEach(cleanup);
 
+/**
+ * Merender AuthenticatedLayout dengan konteks yang dibutuhkannya.
+ *
+ * Layout memanggil `useBootstrapUser` (penyiapan data awal akun), sehingga
+ * memerlukan QueryClientProvider seperti di `App.tsx`. Pengguna palsu pada
+ * mock di atas tidak memiliki `userId`, jadi penyiapan tidak dijalankan dan
+ * konten halaman langsung dirender.
+ */
+function renderLayout(initialEntries?: string[]) {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  return render(
+    <QueryClientProvider client={qc}>
+      <MemoryRouter initialEntries={initialEntries}>
+        <AuthenticatedLayout />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
 // ===========================================================================
 // 1. AuthenticatedLayout — navigasi bawah
 // ===========================================================================
 describe('AuthenticatedLayout – navigasi bawah', () => {
   it('memiliki role="navigation" (elemen <nav>) dengan aria-label "Navigasi utama"', () => {
-    render(
-      <MemoryRouter>
-        <AuthenticatedLayout />
-      </MemoryRouter>,
-    );
+    renderLayout();
+
     // GlassBar bawah di-render sebagai <nav aria-label="Navigasi utama">
     const nav = screen.getByRole('navigation', { name: 'Navigasi utama' });
     expect(nav).not.toBeNull();
   });
 
   it('setiap tab navigasi memiliki aria-label yang deskriptif', () => {
-    render(
-      <MemoryRouter>
-        <AuthenticatedLayout />
-      </MemoryRouter>,
-    );
+    renderLayout();
+
     const expectedLabels = ['Beranda', 'Transaksi', 'Laporan', 'Notifikasi', 'Pengaturan'];
     for (const label of expectedLabels) {
       expect(
@@ -95,21 +109,14 @@ describe('AuthenticatedLayout – navigasi bawah', () => {
   });
 
   it('tab aktif memiliki aria-current="page"', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <AuthenticatedLayout />
-      </MemoryRouter>,
-    );
+    renderLayout(['/']);
     const berandaBtn = screen.getByRole('button', { name: 'Beranda' });
     expect(berandaBtn.getAttribute('aria-current')).toBe('page');
   });
 
   it('lolos pemeriksaan axe pada elemen navigasi bawah', async () => {
-    render(
-      <MemoryRouter>
-        <AuthenticatedLayout />
-      </MemoryRouter>,
-    );
+    renderLayout();
+
     // Jalankan axe hanya pada <nav> agar tidak terpengaruh elemen lain
     const nav = screen.getByRole('navigation', { name: 'Navigasi utama' });
     const results = await axe.run(nav, AXE_OPTIONS);

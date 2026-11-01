@@ -5,6 +5,10 @@
  * sekaligus.
  */
 
+// Penyiapan data awal akun
+export { useBootstrapUser, bootstrapDoneKey } from './useBootstrapUser';
+export type { BootstrapSummary, UseBootstrapUserResult } from './useBootstrapUser';
+
 // Query hooks — data
 export { useWallets } from './useWallets';
 export type { WalletItem } from './useWallets';

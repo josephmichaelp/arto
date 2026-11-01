@@ -52,6 +52,7 @@ import {
   renameWallet,
   WalletCategoryOperationError,
 } from './operations-wallet-category';
+import { BootstrapError, bootstrapUser } from './operations-bootstrap';
 import {
   BudgetRecurringGoalError,
   copyBudgetsFromPreviousMonth,
@@ -70,6 +71,11 @@ import {
 export interface LedgerIdentity {
   sub?: string | null;
   username?: string | null;
+  /**
+   * Klaim Cognito mentah. Dipakai `bootstrapUser` untuk mengambil `email`
+   * sebagai nama tampilan awal bila klien tidak mengirimkannya.
+   */
+  claims?: Record<string, unknown> | null;
 }
 
 /**
@@ -146,12 +152,31 @@ function successEnvelope<T>(data: T): LedgerEnvelopeSuccess<T> {
 /** `true` bila galat adalah salah satu galat operasi berbahasa Indonesia. */
 function isOperationError(
   err: unknown,
-): err is LedgerOperationError | WalletCategoryOperationError | BudgetRecurringGoalError {
+): err is
+  | LedgerOperationError
+  | WalletCategoryOperationError
+  | BudgetRecurringGoalError
+  | BootstrapError {
   return (
     err instanceof LedgerOperationError ||
     err instanceof WalletCategoryOperationError ||
-    err instanceof BudgetRecurringGoalError
+    err instanceof BudgetRecurringGoalError ||
+    err instanceof BootstrapError
   );
+}
+
+/**
+ * Menurunkan nama tampilan awal untuk `bootstrapUser`: utamakan nilai yang
+ * dikirim klien, lalu klaim `email` dari token Cognito, lalu string kosong.
+ */
+function displayNameFrom(
+  identity: LedgerIdentity | undefined,
+  input: Record<string, unknown>,
+): string {
+  const fromInput = typeof input.displayName === 'string' ? input.displayName.trim() : '';
+  if (fromInput) return fromInput;
+  const email = identity?.claims?.email;
+  return typeof email === 'string' ? email.trim() : '';
 }
 
 // --- Pemuat NotifPrefs default -------------------------------------------
@@ -247,6 +272,17 @@ export async function dispatchLedgerOperation(
       case 'depositToGoal':
         return successEnvelope(
           await depositToGoal(repo, owner, input as never, { prefs: await getPrefs(), newId }),
+        );
+
+      // --- Penyiapan data awal akun ---
+      case 'bootstrapUser':
+        return successEnvelope(
+          await bootstrapUser(
+            repo,
+            owner,
+            { sub: identity?.sub ?? undefined, displayName: displayNameFrom(identity, input) },
+            { newId },
+          ),
         );
 
       // --- Dompet ---

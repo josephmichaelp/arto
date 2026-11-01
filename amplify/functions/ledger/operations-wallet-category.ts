@@ -78,6 +78,15 @@ export type IdFactory = () => string;
 export interface WalletCategoryOptions {
   /** Pembuat ID untuk entitas baru. Default `crypto.randomUUID`. */
   newId?: IdFactory;
+  /**
+   * Menandai Kategori sebagai bawaan sistem (`builtIn: true`).
+   *
+   * Sengaja ditempatkan di opsi, bukan di `input`, sehingga hanya dapat
+   * disetel oleh pemanggil internal (penyiapan data awal lewat
+   * `bootstrapUser`). Handler AppSync hanya meneruskan `newId`, jadi klien
+   * tidak dapat menandai Kategori miliknya sebagai bawaan.
+   */
+  builtIn?: boolean;
 }
 
 /** Batas item reassign per `TransactWriteItems` (design: potong 25 item). */
@@ -352,7 +361,7 @@ export async function createCategory(
     name,
     nameKey,
     type: input.type,
-    builtIn: false,
+    builtIn: options.builtIn ?? false,
   };
 
   await runGuardedWrite(repo, [

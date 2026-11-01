@@ -18,7 +18,9 @@ const app = anyStack.node.root as App;
 const asm = app.synth({ force: true });
 
 // Stack root Amplify adalah satu-satunya artifact stack tingkat atas.
-const rootArtifact = asm.stacks.find((s) => !s.nestedStackParent) ?? asm.stacks[0]!;
+const rootArtifact =
+  asm.stacks.find((s) => (s as { nestedStackParent?: unknown }).nestedStackParent == null) ??
+  asm.stacks[0]!;
 const template: any = rootArtifact.template;
 const resources: Record<string, any> = template.Resources ?? {};
 

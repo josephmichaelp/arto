@@ -16,6 +16,7 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { GlassBar } from './components/GlassBar';
+import { useBootstrapUser } from './hooks/useBootstrapUser';
 import { navigateWithTransition } from './motion/navigateWithTransition';
 import { useReducedMotion } from './motion/useReducedMotion';
 
@@ -123,6 +124,13 @@ export function AuthenticatedLayout() {
   const location = useLocation();
   const reduced = useReducedMotion();
 
+  /**
+   * Penyiapan data awal akun (Req 3.1, 1.2). Dulu dikerjakan trigger Cognito
+   * `post-confirmation`; kini mutation idempoten `bootstrapUser` yang dipanggil
+   * sekali di sini. `user.userId` adalah `sub` Cognito.
+   */
+  const { ready: accountReady, error: bootstrapError } = useBootstrapUser(user?.userId);
+
   /** Deteksi tab aktif: Beranda aktif hanya saat path persis '/'. */
   function isActive(path: string): boolean {
     if (path === '/') return location.pathname === '/';
@@ -187,7 +195,36 @@ export function AuthenticatedLayout() {
           WebkitOverflowScrolling: 'touch',
         }}
       >
-        <Outlet />
+        {bootstrapError ? (
+          <p
+            role="alert"
+            style={{
+              margin: '12px 0 0',
+              fontSize: 'var(--font-size-caption)',
+              color: 'var(--color-ink-muted, #6b7280)',
+            }}
+          >
+            Sebagian data awal akun belum siap. Muat ulang halaman bila daftar
+            kategori atau dompet terlihat kosong.
+          </p>
+        ) : null}
+
+        {accountReady ? (
+          <Outlet />
+        ) : (
+          <p
+            role="status"
+            aria-live="polite"
+            style={{
+              margin: '32px 0',
+              textAlign: 'center',
+              fontSize: 'var(--font-size-body)',
+              color: 'var(--color-ink-muted, #6b7280)',
+            }}
+          >
+            Menyiapkan akun Anda…
+          </p>
+        )}
       </main>
 
       {/* ------------------------------------------------------------------ */}

@@ -12,7 +12,6 @@ import { ledger } from './functions/ledger/resource';
 import { aiGateway } from './functions/ai-gateway/resource';
 import { recurringRunner } from './functions/recurring-runner/resource';
 import { weeklyInsight } from './functions/weekly-insight/resource';
-import { postConfirmation } from './functions/post-confirmation/resource';
 
 /**
  * Perangkaian backend Arto (Requirement 1.4, 6.2, 13.1, 16.1, 16.2).
@@ -44,7 +43,6 @@ const backend = defineBackend({
   aiGateway,
   recurringRunner,
   weeklyInsight,
-  postConfirmation,
 });
 
 // --- Lambda dan tabel -------------------------------------------------------
@@ -56,14 +54,13 @@ const ledgerFn = backend.ledger.resources.lambda as LambdaFunction;
 const aiGatewayFn = backend.aiGateway.resources.lambda as LambdaFunction;
 const recurringRunnerFn = backend.recurringRunner.resources.lambda as LambdaFunction;
 const weeklyInsightFn = backend.weeklyInsight.resources.lambda as LambdaFunction;
-const postConfirmationFn = backend.postConfirmation.resources.lambda as LambdaFunction;
 
 const tables = backend.data.resources.tables;
 
 /**
  * Nama variabel lingkungan nama tabel per model, sepadan dengan yang dibaca
  * handler (`amplify/functions/ledger/repository.ts` `TABLE_ENV_KEYS`,
- * `amplify/functions/post-confirmation/handler.ts`). Nilai diisi dengan
+ * `amplify/functions/ledger/operations-bootstrap.ts`). Nilai diisi dengan
  * `table.tableName` (token CDK) saat sintesis.
  */
 const TABLE_ENV: Record<string, string> = {
@@ -97,7 +94,9 @@ function grantTable(fn: AmplifyLambda, model: string, mode: 'rw' | 'r'): void {
   if (envKey) fn.addEnvironment(envKey, table.tableName);
 }
 
-// Lambda `ledger`: seluruh tabel aplikasi yang memengaruhi saldo + langganan push.
+// Lambda `ledger`: seluruh tabel aplikasi yang memengaruhi saldo, langganan
+// push, serta `UserProfile`/`NotifPrefs` untuk operasi `bootstrapUser`
+// (penyiapan data awal akun, dulu dikerjakan trigger `post-confirmation`).
 for (const model of [
   'Wallet',
   'Category',
@@ -107,6 +106,8 @@ for (const model of [
   'Goal',
   'Notification',
   'PushSubscription',
+  'UserProfile',
+  'NotifPrefs',
 ] as const) {
   grantTable(ledgerFn, model, 'rw');
 }
@@ -126,11 +127,6 @@ for (const model of [
   grantTable(recurringRunnerFn, model, 'rw');
 }
 
-// Trigger `post-confirmation`: hanya menulis profil, preferensi, Kategori
-// bawaan, dan Dompet "Tunai".
-for (const model of ['UserProfile', 'NotifPrefs', 'Category', 'Wallet'] as const) {
-  grantTable(postConfirmationFn, model, 'rw');
-}
 
 // Lambda `weekly-insight`: memindai profil dan transaksi (baca), menulis
 // Wawasan_Mingguan dan Notifikasi.

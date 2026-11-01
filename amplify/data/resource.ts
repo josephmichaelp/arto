@@ -166,6 +166,23 @@ const schema = a.schema({
   // `ledger/handler.ts` (Requirement 2.1-2.4, 3.2-3.5, 4.1-4.5, 5.1, 5.6,
   // 6.1, 6.4, 7.1, 7.2, 7.4, 7.6). Argumen dan hasil memakai JSON agar
   // bentuk payload tetap dikendalikan dan divalidasi di dalam handler.
+  /**
+   * Menyiapkan data awal akun secara idempoten: `UserProfile`, `NotifPrefs`,
+   * Kategori bawaan, dan Dompet "Tunai". Dipanggil frontend sekali setelah
+   * masuk, menggantikan trigger Cognito `post-confirmation` yang dilepas
+   * karena menimbulkan dependensi sirkular antar nested stack
+   * (`auth` -> fungsi trigger -> `data` -> `auth`).
+   *
+   * Argumen `input` opsional; `displayName` boleh dikirim, dan bila kosong
+   * handler memakai klaim `email` dari token.
+   */
+  bootstrapUser: a
+    .mutation()
+    .arguments({ input: a.json() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
   saveTransaction: a
     .mutation()
     .arguments({ input: a.json().required() })
