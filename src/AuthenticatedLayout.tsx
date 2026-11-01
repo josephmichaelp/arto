@@ -13,9 +13,12 @@
  *               17.1, 17.5, 17.8, 17.11, 17.12, 18.7, 18.8
  */
 
+import { useState } from 'react';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { ArtoMark } from './components/ArtoLogo';
 import { GlassBar } from './components/GlassBar';
+import { Sidebar } from './components/Sidebar';
 import { useBootstrapUser } from './hooks/useBootstrapUser';
 import { navigateWithTransition } from './motion/navigateWithTransition';
 import { useReducedMotion } from './motion/useReducedMotion';
@@ -131,6 +134,9 @@ export function AuthenticatedLayout() {
    */
   const { ready: accountReady, error: bootstrapError } = useBootstrapUser(user?.userId);
 
+  /** Drawer menu lengkap; tujuan sekunder dipindah dari grid Beranda. */
+  const [menuOpen, setMenuOpen] = useState(false);
+
   /** Deteksi tab aktif: Beranda aktif hanya saat path persis '/'. */
   function isActive(path: string): boolean {
     if (path === '/') return location.pathname === '/';
@@ -155,11 +161,47 @@ export function AuthenticatedLayout() {
       {/* Latar gradien mesh (Req 18.7) */}
       <div id="app-bg" aria-hidden="true" />
 
+      {/* Drawer menu lengkap (tujuan sekunder) */}
+      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
+
       {/* ------------------------------------------------------------------ */}
       {/* Bilah navigasi atas (Req 17.8)                                      */}
       {/* ------------------------------------------------------------------ */}
       <GlassBar position="top" aria-label="Navigasi Arto">
-        <span style={{ fontWeight: 600, fontSize: 'var(--font-size-title)' }}>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Buka menu"
+          aria-expanded={menuOpen}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 'var(--hit, 44px)',
+            minHeight: 'var(--hit, 44px)',
+            marginLeft: -8,
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            color: 'var(--color-ink)',
+            fontSize: 20,
+            lineHeight: 1,
+            borderRadius: 12,
+          }}
+        >
+          <span aria-hidden="true">☰</span>
+        </button>
+
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 7,
+            fontWeight: 600,
+            fontSize: 'var(--font-size-title)',
+          }}
+        >
+          <ArtoMark height={20} />
           Arto
         </span>
         <button

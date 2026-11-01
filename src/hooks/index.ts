@@ -10,6 +10,9 @@ export { useBootstrapUser, bootstrapDoneKey } from './useBootstrapUser';
 export type { BootstrapSummary, UseBootstrapUserResult } from './useBootstrapUser';
 
 // Query hooks — data
+export { useUserProfile, useUpdateDisplayName, USER_PROFILE_QUERY_KEY } from './useUserProfile';
+export type { UserProfileItem } from './useUserProfile';
+
 export { useWallets } from './useWallets';
 export type { WalletItem } from './useWallets';
 

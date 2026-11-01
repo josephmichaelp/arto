@@ -12,12 +12,13 @@
  * Requirements: 9.3, 9.5, 15.7, 17.3, 17.9, 17.10
  */
 
+import { useState } from 'react';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
-import { useNotifPrefs } from '../hooks';
+import { useNotifPrefs, useUpdateDisplayName, useUserProfile } from '../hooks';
 import type { NotifPrefsItem } from '../hooks';
 import { loadAmplifyOutputs } from '../app/amplify';
 import { getDataClient } from '../app/dataClient';
@@ -210,6 +211,29 @@ export function SettingsPage() {
   const { data: prefs, isPending: prefsLoading } = useNotifPrefs();
   const updatePrefs = useUpdateNotifPrefs();
 
+  // Nama tampilan: draf lokal mengikuti nilai server sampai pengguna mengetik.
+  const { data: profile } = useUserProfile();
+  const updateName = useUpdateDisplayName();
+  const [nameDraft, setNameDraft] = useState<string | null>(null);
+
+  const savedName = profile?.displayName ?? '';
+  const nameValue = nameDraft ?? savedName;
+  const nameTrimmed = nameValue.trim();
+  const profileReady = Boolean(profile?.id);
+  const canSaveName =
+    profileReady &&
+    nameTrimmed.length > 0 &&
+    nameTrimmed !== savedName.trim() &&
+    !updateName.isPending;
+
+  function handleSaveName() {
+    if (!profile?.id || !canSaveName) return;
+    updateName.mutate(
+      { id: profile.id, displayName: nameTrimmed },
+      { onSuccess: () => setNameDraft(null) },
+    );
+  }
+
   // Email atau nama pengguna yang ditampilkan
   const displayEmail =
     user?.signInDetails?.loginId ?? user?.username ?? 'Pengguna';
@@ -249,6 +273,100 @@ export function SettingsPage() {
             Akun
           </p>
           <SoftCard style={{ padding: '14px 16px' }}>
+            <label
+              htmlFor="display-name"
+              style={{
+                display: 'block',
+                margin: '0 0 6px',
+                fontSize: 'var(--font-size-caption, 13px)',
+                color: 'var(--color-ink-muted, #6b7280)',
+                fontWeight: 600,
+              }}
+            >
+              Nama tampilan
+            </label>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'stretch' }}>
+              <input
+                id="display-name"
+                type="text"
+                value={nameValue}
+                maxLength={60}
+                disabled={!profileReady}
+                onChange={(e) => setNameDraft(e.target.value)}
+                placeholder="Mis. Budi"
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  minHeight: 44,
+                  padding: '0 12px',
+                  borderRadius: 12,
+                  border: '1.5px solid var(--color-separator, rgba(0,0,0,0.12))',
+                  background: 'var(--color-card, #ffffff)',
+                  color: 'var(--color-ink, #1f2430)',
+                  fontSize: 'var(--font-size-body, 16px)',
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleSaveName}
+                disabled={!canSaveName}
+                style={{
+                  minHeight: 44,
+                  padding: '0 16px',
+                  borderRadius: 12,
+                  border: 'none',
+                  cursor: canSaveName ? 'pointer' : 'not-allowed',
+                  opacity: canSaveName ? 1 : 0.45,
+                  background: 'var(--color-brand-blue, #005DAC)',
+                  color: 'var(--color-brand-onBlue, #ffffff)',
+                  fontSize: 'var(--font-size-body, 16px)',
+                  fontWeight: 600,
+                }}
+              >
+                {updateName.isPending ? 'Menyimpan…' : 'Simpan'}
+              </button>
+            </div>
+
+            <p
+              role="status"
+              aria-live="polite"
+              style={{
+                margin: '6px 0 0',
+                minHeight: 18,
+                fontSize: 'var(--font-size-caption, 13px)',
+                color: updateName.isError
+                  ? 'var(--color-semantic-expense, #b3261e)'
+                  : 'var(--color-ink-muted, #6b7280)',
+              }}
+            >
+              {updateName.isError
+                ? (updateName.error?.message ?? 'Gagal menyimpan nama')
+                : updateName.isSuccess && nameDraft === null
+                  ? 'Nama tersimpan.'
+                  : !profileReady
+                    ? 'Profil sedang disiapkan. Coba lagi sebentar.'
+                    : ''}
+            </p>
+
+            <div
+              aria-hidden="true"
+              style={{
+                height: 1,
+                backgroundColor: 'var(--color-separator, rgba(0,0,0,0.08))',
+                margin: '12px 0',
+              }}
+            />
+
+            <p
+              style={{
+                margin: '0 0 2px',
+                fontSize: 'var(--font-size-caption, 13px)',
+                color: 'var(--color-ink-muted, #6b7280)',
+                fontWeight: 600,
+              }}
+            >
+              Email
+            </p>
             <p
               style={{
                 margin: 0,

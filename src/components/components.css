@@ -324,3 +324,157 @@
     transform: none;
   }
 }
+
+/*
+ * Sidebar / Panel_Samping (Req 15.4, 15.5, 17.11).
+ *
+ * Drawer yang menggeser dari kiri, memuat tujuan sekunder yang sebelumnya
+ * berupa grid "Menu" di Beranda. Mengikuti pola `.arto-sheet`: hanya
+ * `transform` dan `opacity` yang dianimasikan, dan pada Gerak_Berkurang
+ * geseran dimatikan sehingga hanya tersisa pudar singkat.
+ */
+.arto-sidebar-root {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+}
+
+.arto-sidebar-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(31, 36, 48, 0.45);
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: var(--ease-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.arto-sidebar-scrim[data-visible='true'] {
+  opacity: 1;
+}
+
+.arto-sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(84vw, 320px);
+  background-color: var(--color-card, #ffffff);
+  color: var(--color-ink, #1f2430);
+  border-top-right-radius: var(--radius-card, 20px);
+  border-bottom-right-radius: var(--radius-card, 20px);
+  box-shadow: 8px 0 32px rgba(31, 36, 48, 0.24);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateX(-100%);
+  transition-property: transform;
+  will-change: transform;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.arto-sidebar[data-visible='true'] {
+  transform: translateX(0);
+}
+
+/* Gerak_Berkurang: tanpa geser, cukup pudar singkat (Req 17.11). */
+[data-motion='reduced'] .arto-sidebar,
+.arto-sidebar[data-motion='reduced'] {
+  transform: none;
+  transition-property: opacity;
+  opacity: 0;
+}
+
+[data-motion='reduced'] .arto-sidebar[data-visible='true'],
+.arto-sidebar[data-motion='reduced'][data-visible='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arto-sidebar {
+    transform: none;
+    transition-property: opacity;
+    opacity: 0;
+  }
+  .arto-sidebar[data-visible='true'] {
+    opacity: 1;
+  }
+}
+
+.arto-sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 10px;
+}
+
+.arto-sidebar__close {
+  margin-left: auto;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-ink, #1f2430);
+  border-radius: 12px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.arto-sidebar__group {
+  padding: 6px 10px 2px;
+}
+
+.arto-sidebar__group-label {
+  margin: 0 0 4px;
+  padding: 0 6px;
+  font-size: var(--font-size-caption, 13px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-muted, #6b7280);
+}
+
+.arto-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 12px;
+  text-align: left;
+  color: var(--color-ink, #1f2430);
+  font-size: var(--font-size-body, 16px);
+  transition: background-color 150ms var(--ease-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.arto-sidebar__item:hover {
+  background-color: rgba(31, 36, 48, 0.06);
+}
+
+.arto-sidebar__item[aria-current='page'] {
+  background-color: var(--color-brand-blue-alpha, rgba(0, 93, 172, 0.12));
+  color: var(--color-brand-blue, #005dac);
+  font-weight: 700;
+}
+
+.arto-sidebar__item-icon {
+  font-size: 20px;
+  line-height: 1;
+  width: 24px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arto-sidebar__item {
+    transition: none;
+  }
+}

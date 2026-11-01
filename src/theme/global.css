@@ -108,12 +108,34 @@ body {
 }
 
 /*
- * Kartu_Lembut (Req 17.9): radius sudut minimal 16 px (variabel >= 20 px).
- * Permukaan solid opak, jadi teks di dalamnya selalu memenuhi kontras.
+ * Kartu_Lembut (Req 17.9, 17.13): radius sudut minimal 16 px (variabel >= 20 px).
+ *
+ * Permukaan semi-opak, bukan solid, agar Latar_Gradien terbaca samar di
+ * belakang kartu. Requirements mendefinisikan Kartu_Lembut sebagai "berlatar
+ * solid ATAU semi-opak", jadi ini masih di dalam spesifikasi, dengan syarat
+ * kontras teks tetap >= 4,5:1.
+ *
+ * Nilai `--card-alpha` dipilih dengan perhitungan, bukan perkiraan: pada latar
+ * terburuk (oat + keempat lapisan mesh ditumpuk penuh = #c3aec4), permukaan
+ * hasil komposit memberi kontras 12,87:1 untuk `--color-ink` dan 6,60:1 untuk
+ * `--color-inkMuted`. Dijaga oleh `src/theme/card-surface.test.ts`.
+ *
+ * Sengaja TANPA `backdrop-filter`: berkas ini membatasi maksimal tiga lapisan
+ * blur per layar demi 60 fps pada ponsel kelas menengah, sedangkan satu layar
+ * dapat memuat banyak Kartu_Lembut. Blur tetap hanya untuk `.glass`.
  */
+:root {
+  --card-alpha: 0.72;
+}
+
 .soft-card {
-  background: var(--color-card);
+  background: rgba(255, 255, 255, var(--card-alpha));
   border-radius: var(--radius-card);
+  /* Tepi terang + bayangan lembut memberi kedalaman tanpa garis keras. */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 1px 2px rgba(31, 36, 48, 0.04),
+    0 8px 24px rgba(31, 36, 48, 0.05);
 }
 
 /*

@@ -28,6 +28,7 @@ import { configureAmplify } from './app/amplify';
 import { queryClient } from './app/queryClient';
 import { LOGIN_ERROR_VOCABULARY } from './auth/errors';
 import { AuthenticatedLayout } from './AuthenticatedLayout';
+import { ArtoLogo } from './components/ArtoLogo';
 import { Skeleton } from './components/Skeleton';
 
 // ---------------------------------------------------------------------------
@@ -186,6 +187,42 @@ function useIdlePrefetch() {
 // Komponen root: App
 // ---------------------------------------------------------------------------
 
+/**
+ * Slot komponen Authenticator.
+ *
+ * Halaman masuk sebelumnya tidak memuat identitas visual apa pun, sehingga
+ * pengguna tidak tahu sedang membuka aplikasi apa. Logo dipasang lewat slot
+ * `Header` resmi Amplify UI agar tetap ikut tata letak dan jarak formulirnya.
+ */
+const authComponents = {
+  Header() {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 8,
+          padding: '32px 16px 12px',
+          color: 'var(--color-ink, #1f2430)',
+        }}
+      >
+        <ArtoLogo height={104} title="Arto" />
+        <p
+          style={{
+            margin: 0,
+            textAlign: 'center',
+            fontSize: 'var(--font-size-caption, 13px)',
+            color: 'var(--color-ink-muted, #6b7280)',
+          }}
+        >
+          Catat pengeluaran harian, pantau anggaran, capai target.
+        </p>
+      </div>
+    );
+  },
+};
+
 export function App() {
   useIdlePrefetch();
 
@@ -196,6 +233,7 @@ export function App() {
           loginMechanisms={['email']}
           formFields={formFields}
           hideSignUp={false}
+          components={authComponents}
         >
           {() => (
             <Routes>

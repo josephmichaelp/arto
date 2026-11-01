@@ -23,7 +23,7 @@ import { Skeleton } from '../components/Skeleton';
 import { AmountDisplay } from '../components/AmountDisplay';
 import { DateDisplay } from '../components/DateDisplay';
 
-import { useWallets, useTransactions, useBudgets, useCategories } from '../hooks';
+import { useWallets, useTransactions, useBudgets, useCategories, useUserProfile } from '../hooks';
 import type { TransactionItem } from '../hooks';
 
 import { summarize } from 'shared/domain/report';
@@ -262,46 +262,6 @@ function BudgetMiniCard({ budget, categoryName, txns }: BudgetMiniCardProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Komponen: Tombol navigasi
-// ---------------------------------------------------------------------------
-
-interface NavButtonProps {
-  label: string;
-  icon: string;
-  onClick: () => void;
-}
-
-function NavButton({ label, icon, onClick }: NavButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-        minWidth: 72,
-        minHeight: 72,
-        padding: '10px 8px',
-        border: '1.5px solid rgba(31,36,48,0.12)',
-        borderRadius: 'var(--radius-card, 20px)',
-        background: 'var(--color-card, #ffffff)',
-        color: 'var(--color-ink, #1f2430)',
-        cursor: 'pointer',
-        fontSize: 'var(--font-size-caption, 13px)',
-        fontWeight: 600,
-        flex: '1 1 0',
-      }}
-    >
-      <span style={{ fontSize: 22 }} aria-hidden="true">{icon}</span>
-      {label}
-    </button>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Komponen utama
 // ---------------------------------------------------------------------------
 
@@ -381,12 +341,20 @@ export function HomePage() {
       .slice(0, 3);
   }, [budgets, domainTxns]);
 
+  const { data: profile } = useUserProfile();
+
   // ---------------------------------------------------------------------------
   // Nama pengguna
   // ---------------------------------------------------------------------------
+  /**
+   * Nama tampilan tersimpan diutamakan; bila belum diisi, turunkan dari email
+   * seperti sebelumnya agar salam tidak pernah kosong.
+   */
   const greetingName = useMemo(
-    () => displayName(user?.signInDetails?.loginId, user?.username),
-    [user],
+    () =>
+      profile?.displayName?.trim() ||
+      displayName(user?.signInDetails?.loginId, user?.username),
+    [profile?.displayName, user],
   );
 
   const isLoading = walletPending || txPending || budgetPending || catPending;
@@ -641,38 +609,6 @@ export function HomePage() {
         </div>
       </SoftCard>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* Navigasi Cepat                                                       */}
-      {/* ------------------------------------------------------------------ */}
-      <p
-        style={{
-          margin: '0 0 10px',
-          fontWeight: 700,
-          fontSize: 'var(--font-size-body, 16px)',
-        }}
-      >
-        Menu
-      </p>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 8,
-          marginBottom: 8,
-        }}
-      >
-        <NavButton icon="💳" label="Dompet" onClick={() => navigate('/dompet')} />
-        <NavButton icon="🏷️" label="Kategori" onClick={() => navigate('/kategori')} />
-        <NavButton icon="📊" label="Anggaran" onClick={() => navigate('/anggaran')} />
-        <NavButton icon="📋" label="Transaksi" onClick={() => navigate('/transaksi')} />
-        <NavButton icon="🔄" label="Berulang" onClick={() => navigate('/berulang')} />
-        <NavButton icon="🎯" label="Target" onClick={() => navigate('/target')} />
-        <NavButton icon="📈" label="Laporan" onClick={() => navigate('/laporan')} />
-        <NavButton icon="🤖" label="Asisten" onClick={() => navigate('/asisten')} />
-        <NavButton icon="💡" label="Wawasan" onClick={() => navigate('/wawasan')} />
-        <NavButton icon="🔔" label="Notifikasi" onClick={() => navigate('/notifikasi')} />
-        <NavButton icon="⚙️" label="Pengaturan" onClick={() => navigate('/pengaturan')} />
-      </div>
     </div>
   );
 }

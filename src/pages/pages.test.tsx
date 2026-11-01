@@ -53,6 +53,7 @@ vi.mock('../hooks', () => ({
   useTransactions: vi.fn(),
   useBudgets: vi.fn(),
   useCategories: vi.fn(),
+  useUserProfile: vi.fn(),
   useTransactionPage: vi.fn(),
   useSaveTransaction: vi.fn(),
   useDeleteTransaction: vi.fn(),
@@ -65,6 +66,7 @@ import {
   useTransactions,
   useBudgets,
   useCategories,
+  useUserProfile,
   useTransactionPage,
   useSaveTransaction,
   useDeleteTransaction,
@@ -117,6 +119,8 @@ describe('HomePage', () => {
     // Kategori dan anggaran kosong sebagai default untuk suite ini
     vi.mocked(useCategories).mockReturnValue({ data: [], isPending: false } as unknown as ReturnType<typeof useCategories>);
     vi.mocked(useBudgets).mockReturnValue({ data: [], isPending: false, error: null } as unknown as ReturnType<typeof useBudgets>);
+    // Tanpa profil tersimpan, salam jatuh kembali ke turunan email.
+    vi.mocked(useUserProfile).mockReturnValue({ data: null } as unknown as ReturnType<typeof useUserProfile>);
   });
 
   it('menampilkan salam dengan nama pengguna yang dimuat', () => {
@@ -126,6 +130,31 @@ describe('HomePage', () => {
     render(<HomePage />);
 
     // displayName('budi@example.com', 'budi') → ambil bagian sebelum '@' → 'Budi'
+    expect(screen.getByText('Halo, Budi')).not.toBeNull();
+  });
+
+  it('mengutamakan nama tampilan tersimpan di atas turunan email', () => {
+    vi.mocked(useWallets).mockReturnValue({ data: [], isPending: false } as unknown as ReturnType<typeof useWallets>);
+    vi.mocked(useTransactions).mockReturnValue({ data: [], isPending: false } as unknown as ReturnType<typeof useTransactions>);
+    vi.mocked(useUserProfile).mockReturnValue({
+      data: { id: 'sub-1', displayName: 'Siti Rahma' },
+    } as unknown as ReturnType<typeof useUserProfile>);
+
+    render(<HomePage />);
+
+    expect(screen.getByText('Halo, Siti Rahma')).not.toBeNull();
+    expect(screen.queryByText('Halo, Budi')).toBeNull();
+  });
+
+  it('jatuh kembali ke turunan email bila nama tersimpan kosong', () => {
+    vi.mocked(useWallets).mockReturnValue({ data: [], isPending: false } as unknown as ReturnType<typeof useWallets>);
+    vi.mocked(useTransactions).mockReturnValue({ data: [], isPending: false } as unknown as ReturnType<typeof useTransactions>);
+    vi.mocked(useUserProfile).mockReturnValue({
+      data: { id: 'sub-1', displayName: '   ' },
+    } as unknown as ReturnType<typeof useUserProfile>);
+
+    render(<HomePage />);
+
     expect(screen.getByText('Halo, Budi')).not.toBeNull();
   });
 

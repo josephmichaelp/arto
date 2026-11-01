@@ -113,7 +113,8 @@ export function useBootstrapUser(sub: string | undefined): UseBootstrapUserResul
     // Data awal baru tersedia: muat ulang daftar yang terpengaruh.
     void qc.invalidateQueries({ queryKey: ['wallets'] });
     void qc.invalidateQueries({ queryKey: ['categories'] });
-    void qc.invalidateQueries({ queryKey: ['notifPrefs'] });
+    void qc.invalidateQueries({ queryKey: ['notif-prefs'] });
+    void qc.invalidateQueries({ queryKey: ['user-profile'] });
   }, [query.isSuccess, sub, qc]);
 
   return {
