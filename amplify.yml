@@ -1,4 +1,4 @@
-version: 1
+﻿version: 1
 env:
   variables:
     AWS_REGION: ap-southeast-1
@@ -8,9 +8,6 @@ backend:
     build:
       commands:
         - npm ci
-        # verify:bedrock dijalankan manual setelah deploy pertama berhasil.
-        # Aktifkan kembali kondisi ini setelah IAM role Amplify diberi izin Bedrock.
-        - echo "Melewati verifikasi Bedrock - jalankan manual: npm run verify:bedrock"
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
   phases:
