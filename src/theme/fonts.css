@@ -1,0 +1,23 @@
+/*
+ * Inter (subset latin) di-host sendiri dari `@fontsource-variable/inter`
+ * (SIL OFL 1.1) untuk perangkat non-Apple (Req 18.1, 18.2, 18.4, 15.6).
+ *
+ * Hanya subset `latin` yang dimuat, dengan `font-display: swap`. Keluarga
+ * didaftarkan sebagai `Inter` agar cocok dengan tumpukan `--font-ui` pada
+ * `global.css`. Berkas woff2 berasal dari paket npm sehingga Vite mem-bundle
+ * dan mem-hash-nya; tidak ada berkas font yang dikomit ke repositori.
+ *
+ * PENTING: ini BUKAN `@font-face` untuk SF. Tidak ada berkas atau keluarga
+ * font San Francisco yang didefinisikan di sini (Req 18.3, 18.4). `unicode-range`
+ * disalin dari subset latin paket agar peramban hanya mengunduh glif latin.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

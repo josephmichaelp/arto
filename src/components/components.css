@@ -1,0 +1,326 @@
+/**
+ * Gaya komponen UI Design System (Req 17.7, 17.8, 17.9, 17.10, 17.11, 17.12).
+ *
+ * Nilai warna, radius, durasi, dan kurva TIDAK diduplikasi di sini; semuanya
+ * dibaca dari variabel CSS pada `src/theme/tokens.css` dan `src/theme/global.css`
+ * (serta `src/motion/motion.css`). Komponen cukup menambahkan kelas Design System
+ * (`.glass`, `.soft-card`) lalu kelas bantu di bawah untuk tata letak dan gerak.
+ */
+
+/*
+ * GlassBar (Req 17.8): bilah atas/bawah memakai Permukaan_Kaca `.glass`.
+ * Batas tiga lapisan blur per layar dijaga di tingkat pemakaian, bukan di sini.
+ */
+.arto-glass-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  min-height: var(--hit, 44px);
+  width: 100%;
+}
+
+.arto-glass-bar--top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.arto-glass-bar--bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-top: 8px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+/*
+ * SoftCard (Req 17.9): wadah teks di atas Latar_Gradien. Radius diambil dari
+ * `--radius-card` (>= 20 px, memenuhi minimal 16 px). Padding default nyaman
+ * untuk layar 320-480 px.
+ */
+.arto-soft-card {
+  padding: 16px;
+}
+
+/*
+ * LargeTitle (Req 17.7, 17.11): Judul_Besar yang mengecil menjadi judul ringkas
+ * saat digulir. Hanya `transform` dan `opacity` yang dianimasikan demi 60 fps.
+ */
+.arto-large-title {
+  position: relative;
+  display: block;
+}
+
+.arto-large-title__big {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 700;
+  transform-origin: left center;
+  /* transform & opacity diisi inline dari nilai gulir (p). */
+  will-change: transform, opacity;
+}
+
+.arto-large-title__compact {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 600;
+  /* opacity diisi inline dari nilai gulir (p). */
+  will-change: opacity;
+}
+
+.arto-large-title__sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/*
+ * Skeleton (Req 17.10, 17.11): placeholder dengan kilau 1400 ms yang berhenti
+ * saat Gerak_Berkurang. Radius mengikuti kartu final lewat prop/inline style.
+ */
+.arto-skeleton {
+  display: block;
+  background-color: rgba(31, 36, 48, 0.08);
+  background-image: linear-gradient(
+    90deg,
+    rgba(31, 36, 48, 0) 0%,
+    rgba(31, 36, 48, 0.09) 50%,
+    rgba(31, 36, 48, 0) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-position: -150% 0;
+  animation: arto-skeleton-shimmer 1400ms ease-in-out infinite;
+}
+
+@keyframes arto-skeleton-shimmer {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 150% 0;
+  }
+}
+
+/* Kilau berhenti pada Gerak_Berkurang (Req 17.11). */
+[data-motion='reduced'] .arto-skeleton {
+  animation: none;
+  background-image: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arto-skeleton {
+    animation: none;
+    background-image: none;
+  }
+}
+
+/* Teks status tersembunyi secara visual namun terbaca pembaca layar. */
+.arto-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * BottomSheet / Lembar_Bawah (Req 17.2, 17.3, 17.4, 17.11, 15.4).
+ *
+ * Buka 280 ms dan tutup 220 ms (durasi diisi inline dari `resolveMotion`).
+ * Hanya `transform` dan `opacity` yang dianimasikan demi 60 fps. Pada
+ * Gerak_Berkurang transform dinonaktifkan dan hanya pudar singkat yang tersisa.
+ */
+.arto-sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.arto-sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(31, 36, 48, 0.45);
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: var(--ease-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.arto-sheet-scrim[data-visible='true'] {
+  opacity: 1;
+}
+
+.arto-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--color-card, #ffffff);
+  color: var(--color-ink, #1f2430);
+  border-top-left-radius: var(--radius-card, 20px);
+  border-top-right-radius: var(--radius-card, 20px);
+  box-shadow: 0 -8px 32px rgba(31, 36, 48, 0.24);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(100%);
+  transition-property: transform;
+  will-change: transform;
+}
+
+.arto-sheet[data-visible='true'] {
+  transform: translateY(0);
+}
+
+/* Gerak_Berkurang: tanpa geser, cukup pudar singkat (Req 17.11). */
+[data-motion='reduced'] .arto-sheet,
+.arto-sheet[data-motion='reduced'] {
+  transform: none;
+  transition-property: opacity;
+  opacity: 0;
+}
+
+[data-motion='reduced'] .arto-sheet[data-visible='true'],
+.arto-sheet[data-motion='reduced'][data-visible='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arto-sheet {
+    transform: none;
+    transition-property: opacity;
+    opacity: 0;
+  }
+  .arto-sheet[data-visible='true'] {
+    opacity: 1;
+  }
+}
+
+/* Area gagang untuk memulai geser ke bawah (Pointer Events). */
+.arto-sheet__handle-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24px;
+  padding: 8px 0;
+  touch-action: none;
+  cursor: grab;
+}
+
+.arto-sheet__grabber {
+  display: block;
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: rgba(31, 36, 48, 0.24);
+}
+
+.arto-sheet__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 8px;
+}
+
+.arto-sheet__title {
+  flex: 1;
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+/* Tombol Tutup target sentuh minimal 44 x 44 px (Req 15.4). */
+.arto-sheet__close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--hit, 44px);
+  min-height: var(--hit, 44px);
+  border: 0;
+  background: transparent;
+  color: var(--color-ink, #1f2430);
+  font-size: 28px;
+  line-height: 1;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.arto-sheet__body {
+  overflow-y: auto;
+  padding: 0 16px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * QuickAddFab / Aksi_Cepat_Tambah (Req 17.1, 17.2, 17.6, 15.4).
+ *
+ * Tombol bulat 56 px menempel di kanan bawah, di atas bilah navigasi
+ * (`bottom: calc(env(safe-area-inset-bottom) + 72px)`). Warna_Merek Biru
+ * dengan ikon `onBlue`. Target 56 px memenuhi minimal 44 x 44 px.
+ */
+.arto-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 72px);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  min-width: var(--hit, 44px);
+  min-height: var(--hit, 44px);
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background-color: var(--color-brand-blue, #005dac);
+  color: var(--color-onBlue, #ffffff);
+  box-shadow: 0 6px 20px rgba(31, 36, 48, 0.28);
+  cursor: pointer;
+  /* Umpan balik tekan: susut ke 0,96 selama 120 ms, tanpa haptik (Req 17.2). */
+  transition-property: transform;
+  transition-duration: 120ms;
+  transition-timing-function: var(--ease-standard, cubic-bezier(0.2, 0, 0, 1));
+  will-change: transform;
+}
+
+.arto-fab:active {
+  transform: scale(0.96);
+}
+
+.arto-fab__icon {
+  display: block;
+  pointer-events: none;
+}
+
+/* Gerak_Berkurang: tanpa animasi susut (Req 17.6, 17.11). */
+[data-motion='reduced'] .arto-fab {
+  transition-property: none;
+}
+
+[data-motion='reduced'] .arto-fab:active {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arto-fab {
+    transition-property: none;
+  }
+  .arto-fab:active {
+    transform: none;
+  }
+}
