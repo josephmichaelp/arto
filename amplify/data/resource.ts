@@ -36,6 +36,8 @@ const schema = a.schema({
       initialBalance: a.integer().required(),
       balance: a.integer().required(),
     })
+    // Mutation bawaan dimatikan; nama create/update/delete dipakai custom mutation.
+    .disableOperations(['mutations'])
     .authorization((allow) => [allow.owner().to(['read'])]),
 
   Category: a
@@ -45,6 +47,8 @@ const schema = a.schema({
       type: a.enum(['EXPENSE', 'INCOME']),
       builtIn: a.boolean(),
     })
+    // Mutation bawaan dimatikan; nama create/update/delete dipakai custom mutation.
+    .disableOperations(['mutations'])
     .authorization((allow) => [allow.owner().to(['read'])]),
 
   Transaction: a
@@ -65,6 +69,8 @@ const schema = a.schema({
       // sehingga tidak ada definisi ganda yang bertentangan.
       owner: a.string(),
     })
+    // Mutation bawaan dimatikan; nama create/update/delete dipakai custom mutation.
+    .disableOperations(['mutations'])
     // Daftar Transaksi tak hingga diurutkan menurun berdasarkan tanggal
     // lewat kueri `listTxByDate` (Requirement 2.5).
     .secondaryIndexes((index) => [
@@ -94,6 +100,8 @@ const schema = a.schema({
       nextDueOn: a.string(),
       status: a.enum(['ACTIVE', 'PAUSED']),
     })
+    // Mutation bawaan dimatikan; nama create/update/delete dipakai custom mutation.
+    .disableOperations(['mutations'])
     // `recurring-runner` memilih aturan jatuh tempo lewat `listRulesDue`
     // (status = ACTIVE, nextDueOn <= today) (Requirement 6.2, 6.3).
     .secondaryIndexes((index) => [
@@ -109,6 +117,8 @@ const schema = a.schema({
       deadline: a.string(),
       achieved: a.boolean(),
     })
+    // Mutation bawaan dimatikan; nama create/update/delete dipakai custom mutation.
+    .disableOperations(['mutations'])
     .authorization((allow) => [allow.owner().to(['read'])]),
 
   Notification: a
