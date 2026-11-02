@@ -12,9 +12,11 @@ import { ledger } from './functions/ledger/resource';
 import { aiGateway } from './functions/ai-gateway/resource';
 import { recurringRunner } from './functions/recurring-runner/resource';
 import { weeklyInsight } from './functions/weekly-insight/resource';
+import { groupManager } from './functions/group-manager/resource';
 
 /**
  * Perangkaian backend Arto (Requirement 1.4, 6.2, 13.1, 16.1, 16.2).
+ * Diperluas dengan Lambda group-manager untuk fitur Keuangan Bersama.
  *
  * Berkas ini menyatukan auth, data, storage, dan lima fungsi Lambda, lalu
  * menambahkan sumber daya/kebijakan yang tidak dapat dinyatakan lewat
@@ -43,6 +45,7 @@ const backend = defineBackend({
   aiGateway,
   recurringRunner,
   weeklyInsight,
+  groupManager,
 });
 
 // --- Lambda dan tabel -------------------------------------------------------
@@ -54,6 +57,7 @@ const ledgerFn = backend.ledger.resources.lambda as LambdaFunction;
 const aiGatewayFn = backend.aiGateway.resources.lambda as LambdaFunction;
 const recurringRunnerFn = backend.recurringRunner.resources.lambda as LambdaFunction;
 const weeklyInsightFn = backend.weeklyInsight.resources.lambda as LambdaFunction;
+const groupManagerFn = backend.groupManager.resources.lambda as LambdaFunction;
 
 const tables = backend.data.resources.tables;
 
@@ -75,6 +79,8 @@ const TABLE_ENV: Record<string, string> = {
   NotifPrefs: 'NOTIFPREFS_TABLE_NAME',
   PushSubscription: 'PUSHSUBSCRIPTION_TABLE_NAME',
   WeeklyInsight: 'WEEKLYINSIGHT_TABLE_NAME',
+  SharedGroup: 'SHARED_GROUP_TABLE_NAME',
+  GroupMember: 'GROUP_MEMBER_TABLE_NAME',
 };
 
 /** Tipe fungsi Lambda Amplify dengan akses CDK (addEnvironment, grants, IAM). */
@@ -143,6 +149,25 @@ grantTable(aiGatewayFn, 'Category', 'r');
 grantTable(aiGatewayFn, 'Budget', 'r');
 grantTable(aiGatewayFn, 'Wallet', 'r');
 grantTable(aiGatewayFn, 'Goal', 'r');
+
+// Lambda `group-manager`: butuh akses baca/tulis SharedGroup dan GroupMember,
+// serta akses baca NotifPrefs untuk cek preferensi notifikasi anggota.
+// Tabel-tabel ini ada di data stack, sama dengan group-manager (resourceGroupName: 'data').
+for (const model of ['SharedGroup', 'GroupMember'] as const) {
+  grantTable(groupManagerFn, model, 'rw');
+}
+// ledger juga perlu GroupMember untuk checkGroupAccess
+grantTable(ledgerFn, 'GroupMember', 'r');
+grantTable(ledgerFn, 'SharedGroup', 'r');
+
+// --- IAM SES untuk group-manager -------------------------------------------
+
+groupManagerFn.addToRolePolicy(
+  new iam.PolicyStatement({
+    actions: ['ses:SendEmail'],
+    resources: ['*'],
+  }),
+);
 
 // --- Tabel AiUsage (khusus fungsi, dengan TTL) -----------------------------
 

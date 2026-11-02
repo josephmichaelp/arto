@@ -65,6 +65,7 @@ export const SIDEBAR_GROUPS: readonly SidebarGroup[] = [
     label: 'Akun',
     items: [
       { path: '/notifikasi', label: 'Notifikasi', icon: '🔔' },
+      { path: '/grup', label: 'Grup Keuangan', icon: '👨‍👩‍👧' },
       { path: '/pengaturan', label: 'Pengaturan', icon: '⚙️' },
     ],
   },

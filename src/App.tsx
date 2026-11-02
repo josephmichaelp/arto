@@ -48,6 +48,8 @@ const AssistantPage    = lazy(() => import('./pages/AssistantPage'));
 const InsightsPage     = lazy(() => import('./pages/InsightsPage'));
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const SettingsPage     = lazy(() => import('./pages/SettingsPage'));
+const GroupPage       = lazy(() => import('./pages/GroupPage'));
+const JoinGroupPage    = lazy(() => import('./pages/JoinGroupPage'));
 
 // ---------------------------------------------------------------------------
 // Inisialisasi Amplify (sekali saat modul dimuat)
@@ -342,6 +344,14 @@ export function App() {
                     </Suspense>
                   }
                 />
+                <Route
+                  path="/grup"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <GroupPage />
+                    </Suspense>
+                  }
+                />
                 {/* Catch-all: arahkan ke beranda */}
                 <Route
                   path="*"
@@ -352,6 +362,17 @@ export function App() {
                   }
                 />
               </Route>
+
+              {/* Penerimaan undangan — di luar AuthenticatedLayout agar
+                  dapat diakses sebelum login, token disimpan ke sessionStorage */}
+              <Route
+                path="/bergabung"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <JoinGroupPage />
+                  </Suspense>
+                }
+              />
             </Routes>
           )}
         </Authenticator>

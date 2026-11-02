@@ -53,6 +53,7 @@ import {
   WalletCategoryOperationError,
 } from './operations-wallet-category';
 import { BootstrapError, bootstrapUser } from './operations-bootstrap';
+import { checkGroupAccess, GroupAccessError, listGroupData } from './operations-group';
 import {
   BudgetRecurringGoalError,
   copyBudgetsFromPreviousMonth,
@@ -156,12 +157,14 @@ function isOperationError(
   | LedgerOperationError
   | WalletCategoryOperationError
   | BudgetRecurringGoalError
-  | BootstrapError {
+  | BootstrapError
+  | GroupAccessError {
   return (
     err instanceof LedgerOperationError ||
     err instanceof WalletCategoryOperationError ||
     err instanceof BudgetRecurringGoalError ||
-    err instanceof BootstrapError
+    err instanceof BootstrapError ||
+    err instanceof GroupAccessError
   );
 }
 
@@ -273,6 +276,34 @@ export async function dispatchLedgerOperation(
         return successEnvelope(
           await depositToGoal(repo, owner, input as never, { prefs: await getPrefs(), newId }),
         );
+
+      // --- Query data grup ---
+      // Validasi keanggotaan sebelum mengembalikan data grup.
+      case 'listGroupWallets':
+      case 'listGroupCategories':
+      case 'listGroupTransactions':
+      case 'listGroupBudgets':
+      case 'listGroupGoals':
+      case 'listGroupRecurringRules': {
+        const gId = String(input.groupId ?? '');
+        if (!gId) return errorEnvelope('VALIDATION_ERROR', 'groupId wajib diisi');
+        const sub = identity?.sub ?? undefined;
+        if (!sub) return errorEnvelope('UNAUTHENTICATED', 'Identitas tidak valid');
+        // Validasi keanggotaan (VIEWER diizinkan untuk query baca)
+        await checkGroupAccess(sub, owner, gId, 'VIEWER');
+        const TABLE_FOR_FIELD: Record<string, string | undefined> = {
+          listGroupWallets: process.env.WALLET_TABLE_NAME,
+          listGroupCategories: process.env.CATEGORY_TABLE_NAME,
+          listGroupTransactions: process.env.TRANSACTION_TABLE_NAME,
+          listGroupBudgets: process.env.BUDGET_TABLE_NAME,
+          listGroupGoals: process.env.GOAL_TABLE_NAME,
+          listGroupRecurringRules: process.env.RECURRING_RULE_TABLE_NAME,
+        };
+        const tableName = TABLE_FOR_FIELD[field];
+        if (!tableName) return errorEnvelope('INTERNAL_ERROR', 'Tabel tidak ditemukan');
+        const items = await listGroupData(tableName, gId);
+        return successEnvelope(items);
+      }
 
       // --- Penyiapan data awal akun ---
       case 'bootstrapUser':

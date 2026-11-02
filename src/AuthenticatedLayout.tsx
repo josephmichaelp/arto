@@ -19,6 +19,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ArtoMark } from './components/ArtoLogo';
 import { GlassBar } from './components/GlassBar';
 import { Sidebar } from './components/Sidebar';
+import { useGroupContext } from './hooks/useGroupContext';
 import { useBootstrapUser } from './hooks/useBootstrapUser';
 import { navigateWithTransition } from './motion/navigateWithTransition';
 import { useReducedMotion } from './motion/useReducedMotion';
@@ -136,6 +137,9 @@ export function AuthenticatedLayout() {
 
   /** Drawer menu lengkap; tujuan sekunder dipindah dari grid Beranda. */
   const [menuOpen, setMenuOpen] = useState(false);
+  const [ctxOpen, setCtxOpen] = useState(false);
+  const { context, groups, switchToPersonal, switchToGroup } = useGroupContext();
+  const hasGroup = groups.length > 0;
 
   /** Deteksi tab aktif: Beranda aktif hanya saat path persis '/'. */
   function isActive(path: string): boolean {
@@ -161,6 +165,68 @@ export function AuthenticatedLayout() {
 
       {/* Drawer menu lengkap (tujuan sekunder) */}
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      {/* Lembar pilih konteks pribadi/grup */}
+      {ctxOpen && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 110, background: 'rgba(31,36,48,0.45)' }}
+          onClick={() => setCtxOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              background: 'var(--color-card, #fff)', borderRadius: '20px 20px 0 0',
+              padding: '20px 16px env(safe-area-inset-bottom)',
+            }}
+          >
+            <p style={{ margin: '0 0 14px', fontWeight: 700, fontSize: 16 }}>Pilih Konteks</p>
+
+            <button
+              type="button"
+              onClick={() => { switchToPersonal(); setCtxOpen(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12, width: '100%',
+                minHeight: 48, padding: '10px 14px', borderRadius: 12, border: 'none',
+                background: context.mode === 'personal' ? 'var(--color-brand-blue-alpha, rgba(0,93,172,0.1))' : 'transparent',
+                cursor: 'pointer', textAlign: 'left', fontSize: 16, fontWeight: context.mode === 'personal' ? 700 : 500,
+                color: context.mode === 'personal' ? 'var(--color-brand-blue, #005DAC)' : 'var(--color-ink, #1f2430)',
+                marginBottom: 4,
+              }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 20 }}>👤</span>
+              <span>Pribadi</span>
+              {context.mode === 'personal' && <span style={{ marginLeft: 'auto', fontSize: 18 }}>✓</span>}
+            </button>
+
+            {groups.map((g) => (
+              <button
+                key={g.groupId}
+                type="button"
+                onClick={() => { switchToGroup(g); setCtxOpen(false); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, width: '100%',
+                  minHeight: 48, padding: '10px 14px', borderRadius: 12, border: 'none',
+                  background: context.groupId === g.groupId ? 'var(--color-brand-blue-alpha, rgba(0,93,172,0.1))' : 'transparent',
+                  cursor: 'pointer', textAlign: 'left', fontSize: 16,
+                  fontWeight: context.groupId === g.groupId ? 700 : 500,
+                  color: context.groupId === g.groupId ? 'var(--color-brand-blue, #005DAC)' : 'var(--color-ink, #1f2430)',
+                  marginBottom: 4,
+                }}
+              >
+                <span aria-hidden="true" style={{ fontSize: 20 }}>👥</span>
+                <div>
+                  <p style={{ margin: 0 }}>{g.groupName}</p>
+                  <p style={{ margin: 0, fontSize: 12, color: 'var(--color-ink-muted, #6b7280)' }}>
+                    {g.role === 'OWNER' ? 'Pemilik' : g.role === 'CO_OWNER' ? 'Ko-Pemilik' : 'Penonton'}
+                  </p>
+                </div>
+                {context.groupId === g.groupId && <span style={{ marginLeft: 'auto', fontSize: 18 }}>✓</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ------------------------------------------------------------------ */}
       {/* Bilah navigasi atas (Req 17.8)                                      */}
@@ -202,6 +268,26 @@ export function AuthenticatedLayout() {
           <ArtoMark height={20} />
           Arto
         </span>
+
+        {/* Pemilih konteks: hanya tampil bila pengguna punya grup */}
+        {hasGroup && (
+          <button
+            type="button"
+            onClick={() => setCtxOpen(true)}
+            aria-label={`Konteks aktif: ${context.mode === 'group' ? context.groupName ?? 'Grup' : 'Pribadi'}. Klik untuk ganti.`}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              padding: '4px 10px', borderRadius: 20,
+              border: '1.5px solid var(--color-brand-blue, #005DAC)',
+              background: context.mode === 'group' ? 'var(--color-brand-blue, #005DAC)' : 'transparent',
+              color: context.mode === 'group' ? '#fff' : 'var(--color-brand-blue, #005DAC)',
+              cursor: 'pointer', fontSize: 12, fontWeight: 700, minHeight: 32,
+            }}
+          >
+            <span aria-hidden="true">{context.mode === 'group' ? '👥' : '👤'}</span>
+            {context.mode === 'group' ? (context.groupName ?? 'Grup') : 'Pribadi'}
+          </button>
+        )}
         <button
           type="button"
           onClick={signOut}

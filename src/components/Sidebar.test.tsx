@@ -39,7 +39,8 @@ describe('Sidebar - render', () => {
 
   it('memuat seluruh tujuan sekunder yang dipindah dari Beranda', () => {
     renderSidebar(true);
-    expect(ALL_ITEMS).toHaveLength(11);
+    // Jumlah item sekarang 12 setelah 'Grup Keuangan' ditambahkan ke kelompok Akun.
+  expect(ALL_ITEMS).toHaveLength(12);
     for (const item of ALL_ITEMS) {
       expect(
         screen.getByRole('button', { name: item.label }),

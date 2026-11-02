@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { ledger } from '../functions/ledger/resource';
 import { aiGateway } from '../functions/ai-gateway/resource';
+import { groupManager } from '../functions/group-manager/resource';
 
 /**
  * Skema data Arto.
@@ -160,6 +161,186 @@ const schema = a.schema({
       tips: a.string().array(),
     })
     .authorization((allow) => [allow.owner().to(['read'])]),
+
+
+  // =========================================================================
+  // Model Keuangan Bersama (Shared Finance)
+  // =========================================================================
+
+  /**
+   * Grup keuangan bersama. Dibuat oleh Pemilik; maksimal 5 anggota total.
+   * Seluruh operasi tulis lewat Lambda `group-manager` langsung ke DynamoDB.
+   * AppSync queries/mutations dimatikan untuk mencegah akses langsung klien.
+   */
+  SharedGroup: a
+    .model({
+      name: a.string().required(),
+      // ownerSub diisi otomatis oleh Amplify dengan sub Cognito pemilik
+      // (lewat `owner` field standar).
+    })
+    .disableOperations(['create', 'update', 'delete', 'list', 'get',
+      'onCreate', 'onUpdate', 'onDelete'])
+    .authorization((allow) => [allow.owner()]),
+
+  /**
+   * Keanggotaan dalam grup. Mendukung dua "pemilik" (group owner + invitee)
+   * agar keduanya bisa membaca record ini via AppSync.
+   * Seluruh tulis via Lambda `group-manager`.
+   */
+  GroupMember: a
+    .model({
+      groupId: a.id().required(),
+      // groupOwnerSub: sub Cognito pemilik grup (untuk auth AppSync)
+      groupOwnerSub: a.string().required(),
+      inviteeEmail: a.string().required(),
+      // inviteeSub: diisi saat undangan diterima
+      inviteeSub: a.string(),
+      role: a.enum(['CO_OWNER', 'VIEWER']),
+      status: a.enum(['PENDING', 'ACTIVE', 'REMOVED', 'DECLINED']),
+      // token JWT; di-null setelah diterima/ditolak
+      token: a.string(),
+      tokenExpiresAt: a.datetime(),
+      invitedAt: a.datetime(),
+      acceptedAt: a.datetime(),
+    })
+    .secondaryIndexes((index) => [
+      // Cari semua anggota sebuah grup
+      index('groupId').queryField('listMembersByGroupId'),
+      // Cari semua grup di mana seorang user adalah anggota
+      index('inviteeSub').queryField('listMembersByInviteeSub'),
+    ])
+    .disableOperations(['create', 'update', 'delete', 'onCreate', 'onUpdate', 'onDelete'])
+    .authorization((allow) => [
+      // Group owner dapat membaca semua anggota grupnya
+      allow.ownerDefinedIn('groupOwnerSub'),
+      // Invitee dapat membaca undangannya sendiri
+      allow.ownerDefinedIn('inviteeSub'),
+    ]),
+
+  // --- Custom mutation untuk Lambda `group-manager` ---
+  // Semua operasi grup (buat grup, undang, terima undangan, kelola anggota)
+  // lewat Lambda ini agar validasi peran dan batas jumlah anggota terpusat.
+
+  createGroup: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  inviteMember: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  acceptInvitation: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  declineInvitation: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  updateMemberRole: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  removeMember: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  leaveGroup: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  disbandGroup: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  getMyGroupContext: a
+    .query()
+    .arguments({ input: a.json() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  listGroupMembersDetail: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  resendInvitation: a
+    .mutation()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(groupManager)),
+
+  // --- Custom query untuk data grup via Lambda `ledger` ---
+
+  listGroupWallets: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
+  listGroupCategories: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
+  listGroupTransactions: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
+  listGroupBudgets: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
+  listGroupGoals: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
+
+  listGroupRecurringRules: a
+    .query()
+    .arguments({ input: a.json().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(ledger)),
 
   // --- Custom mutation untuk Lambda `ledger` ---
   // Setiap operasi memetakan satu field GraphQL ke router di dalam
