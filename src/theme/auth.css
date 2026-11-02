@@ -1,0 +1,158 @@
+/*
+ * Penataan halaman masuk (Amplify UI Authenticator).
+ *
+ * Masalah yang diperbaiki:
+ * 1. Halaman masuk memakai gaya bawaan Amplify UI, sehingga warnanya tidak
+ *    senada dengan tampilan setelah masuk (Latar_Gradien oat/biru/merah muda).
+ *    Latar `#app-bg` sekarang dirender di `App.tsx`, bukan hanya di dalam
+ *    AuthenticatedLayout, sehingga gradien yang sama hadir sejak layar masuk.
+ * 2. Tampilan terasa "mengotak": kartu bersudut kecil dengan garis tepi tegas,
+ *    tab persegi, dan kolom input bersudut tajam. Semua radius disamakan
+ *    dengan bahasa visual aplikasi (Kartu_Lembut, radius >= 16 px).
+ *
+ * Warna merek dipetakan ke token Arto agar tidak ada biru kedua yang bersaing.
+ * Semua target sentuh dijaga minimal 44 px (Req 15.4).
+ *
+ * Catatan performa: `backdrop-filter` dipakai pada SATU elemen saja (kartu
+ * formulir). Layar masuk tidak punya lapisan kaca lain, jadi masih di dalam
+ * anggaran maksimal tiga lapisan blur per layar yang ditetapkan global.css.
+ */
+
+[data-amplify-authenticator] {
+  /* Pemetaan warna merek */
+  --amplify-colors-brand-primary-10: rgba(0, 93, 172, 0.1);
+  --amplify-colors-brand-primary-20: rgba(0, 93, 172, 0.2);
+  --amplify-colors-brand-primary-40: rgba(0, 93, 172, 0.4);
+  --amplify-colors-brand-primary-60: var(--color-brand-blue, #005dac);
+  --amplify-colors-brand-primary-80: var(--color-brand-blue, #005dac);
+  --amplify-colors-brand-primary-90: var(--color-blueDeep, #003f7a);
+  --amplify-colors-brand-primary-100: var(--color-blueDeep, #003f7a);
+  --amplify-colors-font-interactive: var(--color-brand-blue, #005dac);
+  --amplify-colors-font-primary: var(--color-ink, #1f2430);
+  --amplify-colors-font-secondary: var(--color-inkMuted, #4a5160);
+
+  /* Sudut membulat besar, senada Kartu_Lembut */
+  --amplify-radii-small: 10px;
+  --amplify-radii-medium: 14px;
+  --amplify-radii-large: 20px;
+  --amplify-components-fieldcontrol-border-radius: 14px;
+  --amplify-components-button-border-radius: 14px;
+
+  /* Wadah router dibuat netral; gaya kartu diatur di bawah */
+  --amplify-components-authenticator-router-background-color: transparent;
+  --amplify-components-authenticator-router-border-width: 0;
+  --amplify-components-authenticator-router-box-shadow: none;
+  --amplify-components-authenticator-max-width: 26rem;
+  --amplify-components-authenticator-form-padding: 1.25rem 1.5rem 1.5rem;
+
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  font-family: var(--font-family, inherit);
+}
+
+/* Kartu formulir: permukaan kaca, bukan kotak bergaris. */
+[data-amplify-authenticator] [data-amplify-router] {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow:
+    0 1px 2px rgba(31, 36, 48, 0.04),
+    0 18px 48px rgba(31, 36, 48, 0.12);
+  overflow: hidden;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-amplify-authenticator] [data-amplify-router] {
+    background: rgba(255, 255, 255, 0.58);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    backdrop-filter: blur(18px) saturate(1.25);
+  }
+}
+
+/* Tab Masuk / Buat Akun sebagai kontrol pil, bukan dua kotak. */
+[data-amplify-authenticator] .amplify-tabs {
+  gap: 4px;
+  padding: 10px 10px 0;
+  border: none;
+  background: transparent;
+}
+
+[data-amplify-authenticator] .amplify-tabs__item {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-inkMuted, #4a5160);
+  font-weight: 600;
+  transition: background-color 150ms var(--ease-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+[data-amplify-authenticator] .amplify-tabs__item:hover {
+  background: rgba(31, 36, 48, 0.05);
+  color: var(--color-ink, #1f2430);
+}
+
+[data-amplify-authenticator] .amplify-tabs__item--active {
+  background: var(--color-brand-blue, #005dac);
+  color: var(--color-onBlue, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 93, 172, 0.25);
+}
+
+/* Kolom input: lembut, kontras cukup, target 44 px. */
+[data-amplify-authenticator] .amplify-input {
+  min-height: 44px;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(31, 36, 48, 0.14);
+}
+
+[data-amplify-authenticator] .amplify-input:focus {
+  border-color: var(--color-brand-blue, #005dac);
+  box-shadow: 0 0 0 3px rgba(0, 93, 172, 0.18);
+}
+
+[data-amplify-authenticator] .amplify-label {
+  color: var(--color-inkMuted, #4a5160);
+  font-weight: 600;
+}
+
+/* Tombol utama */
+[data-amplify-authenticator] .amplify-button--primary {
+  min-height: 46px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: var(--color-brand-blue, #005dac);
+  box-shadow: 0 2px 10px rgba(0, 93, 172, 0.24);
+}
+
+[data-amplify-authenticator] .amplify-button--primary:hover {
+  background: var(--color-blueDeep, #003f7a);
+}
+
+/* Tombol tautan (lupa sandi, kirim ulang kode) */
+[data-amplify-authenticator] .amplify-button--link {
+  min-height: 44px;
+  color: var(--color-brand-blue, #005dac);
+  font-weight: 600;
+}
+
+/* Tombol ikon di dalam grup kolom (mis. tampilkan sandi) */
+[data-amplify-authenticator] .amplify-field-group__outer-end .amplify-button {
+  min-width: 44px;
+  min-height: 44px;
+  border-color: rgba(31, 36, 48, 0.14);
+}
+
+[data-amplify-authenticator] .amplify-heading {
+  color: var(--color-ink, #1f2430);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-amplify-authenticator] .amplify-tabs__item {
+    transition: none;
+  }
+}

@@ -21,6 +21,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Authenticator, translations } from '@aws-amplify/ui-react';
 import { I18n } from 'aws-amplify/utils';
 import '@aws-amplify/ui-react/styles.css';
+import './theme/auth.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -228,6 +229,12 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/*
+        Latar gradien mesh (Req 18.7) dirender di sini, bukan di dalam
+        AuthenticatedLayout, agar halaman masuk memakai latar yang sama
+        dengan tampilan setelah masuk.
+      */}
+      <div id="app-bg" aria-hidden="true" />
       <BrowserRouter>
         <Authenticator
           loginMechanisms={['email']}

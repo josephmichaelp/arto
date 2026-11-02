@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { AmountInput } from '../components/AmountInput';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
@@ -378,12 +379,9 @@ export function WalletsPage() {
             />
           </FormField>
           <FormField label="Saldo Awal (Rp)" htmlFor="wallet-initial-balance">
-            <input
-              id="wallet-initial-balance"
-              type="text"
-              inputMode="numeric"
-              value={newInitialBalance}
-              onChange={(e) => setNewInitialBalance(e.target.value.replace(/\D/g, ''))}
+            <AmountInput
+              id="wallet-initial-balance"              value={newInitialBalance}
+              onChange={setNewInitialBalance}
               placeholder="0"
               style={inputStyle}
             />
@@ -498,12 +496,9 @@ export function WalletsPage() {
               </select>
             </FormField>
             <FormField label="Nominal (Rp)" htmlFor="transfer-amount">
-              <input
-                id="transfer-amount"
-                type="text"
-                inputMode="numeric"
-                value={transferAmount}
-                onChange={(e) => setTransferAmount(e.target.value.replace(/\D/g, ''))}
+              <AmountInput
+                id="transfer-amount"                value={transferAmount}
+                onChange={setTransferAmount}
                 placeholder="Masukkan nominal"
                 style={inputStyle}
               />

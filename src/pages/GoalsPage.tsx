@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { AmountInput } from '../components/AmountInput';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
@@ -601,12 +602,9 @@ export function GoalsPage() {
             </SoftCard>
 
             <FormField label="Nominal Setoran (Rp)" htmlFor="deposit-amount">
-              <input
-                id="deposit-amount"
-                type="text"
-                inputMode="numeric"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value.replace(/\D/g, ''))}
+              <AmountInput
+                id="deposit-amount"                value={depositAmount}
+                onChange={setDepositAmount}
                 placeholder="Masukkan nominal setoran"
                 style={inputStyle}
               />
@@ -712,12 +710,9 @@ function GoalForm({
       </FormField>
 
       <FormField label="Nominal Target (Rp)" htmlFor="goal-target">
-        <input
-          id="goal-target"
-          type="text"
-          inputMode="numeric"
-          value={formTarget}
-          onChange={(e) => setFormTarget(e.target.value.replace(/\D/g, ''))}
+        <AmountInput
+          id="goal-target"          value={formTarget}
+          onChange={setFormTarget}
           placeholder="Masukkan nominal target"
           style={inputStyle}
         />

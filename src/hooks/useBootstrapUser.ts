@@ -18,6 +18,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { loadAmplifyOutputs } from '../app/amplify';
+import { fromAwsJson, toAwsJson } from '../app/awsJson';
 import { getDataClient } from '../app/dataClient';
 
 const STORAGE_PREFIX = 'arto:bootstrap:';
@@ -87,15 +88,12 @@ export function useBootstrapUser(sub: string | undefined): UseBootstrapUserResul
         | undefined;
       if (!fn) throw new Error('Mutasi bootstrapUser tidak ditemukan pada klien');
 
-      const { data, errors } = await fn({ input: {} });
+      const { data, errors } = await fn({ input: toAwsJson({}) });
       if (errors?.length) {
         throw new Error(errors[0]?.message ?? 'Gagal menyiapkan data awal akun');
       }
 
-      // `a.json()` dapat diterima sebagai string JSON maupun nilai terurai.
-      const envelope = (typeof data === 'string' ? JSON.parse(data) : data) as
-        | LedgerEnvelope
-        | null;
+      const envelope = fromAwsJson<LedgerEnvelope | null>(data);
       if (!envelope?.ok) {
         throw new Error(envelope?.error?.message ?? 'Gagal menyiapkan data awal akun');
       }

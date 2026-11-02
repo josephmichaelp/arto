@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { AmountInput } from '../components/AmountInput';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
@@ -642,12 +643,9 @@ function RuleForm({
 
       {/* Nominal */}
       <FormField label="Nominal (Rp)" htmlFor="rule-amount">
-        <input
-          id="rule-amount"
-          type="text"
-          inputMode="numeric"
-          value={formAmount}
-          onChange={(e) => setFormAmount(e.target.value.replace(/\D/g, ''))}
+        <AmountInput
+          id="rule-amount"          value={formAmount}
+          onChange={setFormAmount}
           placeholder="Masukkan nominal"
           style={inputStyle}
         />

@@ -7,7 +7,7 @@ import type { Rupiah } from './types';
 const AMOUNT_ERROR_MESSAGE = 'Nominal harus berupa angka bulat lebih dari 0';
 
 /** Mengelompokkan digit dengan titik setiap 3 digit dari kanan. */
-function groupThousands(digits: string): string {
+export function groupThousands(digits: string): string {
   return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 

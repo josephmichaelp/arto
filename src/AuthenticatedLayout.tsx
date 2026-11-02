@@ -158,8 +158,6 @@ export function AuthenticatedLayout() {
         overflow: 'hidden',
       }}
     >
-      {/* Latar gradien mesh (Req 18.7) */}
-      <div id="app-bg" aria-hidden="true" />
 
       {/* Drawer menu lengkap (tujuan sekunder) */}
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />

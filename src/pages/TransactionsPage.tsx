@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { AmountInput } from '../components/AmountInput';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
@@ -671,14 +672,10 @@ export function TransactionsPage() {
         </FormField>
 
         <FormField id="tx-amount" label="Nominal (Rp)">
-          <input
-            id="tx-amount"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Contoh: 50000"
+          <AmountInput
+            id="tx-amount"            placeholder="Contoh: 50000"
             value={formAmount}
-            onChange={(e) => setFormAmount(e.target.value.replace(/\D/g, ''))}
+            onChange={setFormAmount}
             style={INPUT_STYLE}
           />
         </FormField>

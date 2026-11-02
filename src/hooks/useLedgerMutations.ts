@@ -11,6 +11,7 @@
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { loadAmplifyOutputs } from '../app/amplify';
+import { fromAwsJson, toAwsJson } from '../app/awsJson';
 import { getDataClient } from '../app/dataClient';
 
 // ---------------------------------------------------------------------------
@@ -28,9 +29,10 @@ async function callLedger<T>(mutationName: string, payload: Record<string, unkno
     | undefined;
   if (!fn) throw new Error(`Mutasi ${mutationName} tidak ditemukan pada klien`);
 
-  const { data, errors } = await fn({ input: payload });
+  // input wajib berupa string JSON: skalar AWSJSON menolak objek biasa.
+  const { data, errors } = await fn({ input: toAwsJson(payload) });
   if (errors?.length) throw new Error(errors[0]?.message ?? `Gagal menjalankan ${mutationName}`);
-  return data as T;
+  return fromAwsJson<T>(data);
 }
 
 // ---------------------------------------------------------------------------

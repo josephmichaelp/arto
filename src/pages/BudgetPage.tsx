@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { AmountInput } from '../components/AmountInput';
 import { LargeTitle } from '../components/LargeTitle';
 import { SoftCard } from '../components/SoftCard';
 import { Skeleton } from '../components/Skeleton';
@@ -545,12 +546,9 @@ export function BudgetPage() {
           )}
 
           <FormField label="Nominal Anggaran (Rp)" htmlFor="budget-amount">
-            <input
-              id="budget-amount"
-              type="text"
-              inputMode="numeric"
-              value={formAmount}
-              onChange={(e) => setFormAmount(e.target.value.replace(/\D/g, ''))}
+            <AmountInput
+              id="budget-amount"              value={formAmount}
+              onChange={setFormAmount}
               placeholder="Contoh: 500000"
               style={inputStyle}
             />

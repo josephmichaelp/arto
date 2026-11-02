@@ -23,6 +23,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { AmountInput } from './AmountInput';
 import { AmountDisplay } from './AmountDisplay';
 import { BottomSheet } from './BottomSheet';
 import { SoftCard } from './SoftCard';
@@ -232,14 +233,10 @@ function EditablePreviewForm({
       <FormField id="preview-amount" label="Nominal (Rp)">
         {form.amount ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <input
-              id="preview-amount"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder="Contoh: 35000"
+            <AmountInput
+              id="preview-amount"              placeholder="Contoh: 35000"
               value={form.amount}
-              onChange={(e) => set('amount', e.target.value.replace(/\D/g, ''))}
+              onChange={(digits: string) => set('amount', digits)}
               style={{ ...INPUT_STYLE, flex: 1 }}
             />
             <AmountDisplay
@@ -253,14 +250,10 @@ function EditablePreviewForm({
             />
           </div>
         ) : (
-          <input
-            id="preview-amount"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Contoh: 35000"
+          <AmountInput
+            id="preview-amount"            placeholder="Contoh: 35000"
             value={form.amount}
-            onChange={(e) => set('amount', e.target.value.replace(/\D/g, ''))}
+            onChange={(digits: string) => set('amount', digits)}
             style={INPUT_STYLE}
           />
         )}
@@ -715,16 +708,10 @@ export function NaturalInputSheet({ open, onClose }: NaturalInputSheetProps) {
                   </p>
 
                   <FormField id="nl-extra-amount" label="Nominal (Rp)">
-                    <input
-                      id="nl-extra-amount"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Contoh: 35000"
+                    <AmountInput
+                      id="nl-extra-amount"                      placeholder="Contoh: 35000"
                       value={nlExtraAmount}
-                      onChange={(e) =>
-                        setNlExtraAmount(e.target.value.replace(/\D/g, ''))
-                      }
+                      onChange={setNlExtraAmount}
                       style={INPUT_STYLE}
                       // eslint-disable-next-line jsx-a11y/no-autofocus
                       autoFocus
