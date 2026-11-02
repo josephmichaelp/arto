@@ -15,7 +15,7 @@
  * — perbedaannya hanya rekaman ditulis dengan `groupId` yang disertakan.
  */
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
 // ---------------------------------------------------------------------------
 // Tipe
@@ -96,24 +96,26 @@ export async function checkGroupAccess(
 ): Promise<GroupAccess> {
   const memberTable = requireEnv('GROUP_MEMBER_TABLE_NAME');
 
-  const result = await getGroupDocClient().send(
-    new QueryCommand({
-      TableName: memberTable,
-      IndexName: 'inviteeSub-index',
-      KeyConditionExpression: 'inviteeSub = :sub',
-      FilterExpression: 'groupId = :g AND #st = :a',
-      ExpressionAttributeNames: { '#st': 'status' },
-      ExpressionAttributeValues: {
-        ':sub': callerSub,
-        ':g': groupId,
-        ':a': 'ACTIVE',
-      },
-    }),
-  );
+  // Scan (bukan Query GSI) agar tidak bergantung pada keberadaan inviteeSub-index.
+  const items: Array<{ role: GroupRole; status: string }> = [];
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const page = await getGroupDocClient().send(
+      new ScanCommand({
+        TableName: memberTable,
+        FilterExpression: 'inviteeSub = :sub AND groupId = :g AND #st = :a',
+        ExpressionAttributeNames: { '#st': 'status' },
+        ExpressionAttributeValues: { ':sub': callerSub, ':g': groupId, ':a': 'ACTIVE' },
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+    for (const item of page.Items ?? []) {
+      items.push(item as { role: GroupRole; status: string });
+    }
+    lastKey = page.LastEvaluatedKey;
+  } while (lastKey);
 
-  const member = result.Items?.[0] as
-    | { role: GroupRole; status: string }
-    | undefined;
+  const member = items[0];
 
   if (!member) {
     throw new GroupAccessError(

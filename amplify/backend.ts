@@ -150,15 +150,38 @@ grantTable(aiGatewayFn, 'Budget', 'r');
 grantTable(aiGatewayFn, 'Wallet', 'r');
 grantTable(aiGatewayFn, 'Goal', 'r');
 
-// Lambda `group-manager`: butuh akses baca/tulis SharedGroup dan GroupMember,
-// serta akses baca NotifPrefs untuk cek preferensi notifikasi anggota.
-// Tabel-tabel ini ada di data stack, sama dengan group-manager (resourceGroupName: 'data').
-for (const model of ['SharedGroup', 'GroupMember'] as const) {
-  grantTable(groupManagerFn, model, 'rw');
-}
-// ledger juga perlu GroupMember untuk checkGroupAccess
-grantTable(ledgerFn, 'GroupMember', 'r');
-grantTable(ledgerFn, 'SharedGroup', 'r');
+// Lambda `group-manager`: akses eksplisit ke tabel SharedGroup dan GroupMember.
+// Menggunakan IAM PolicyStatement dengan wildcard karena grantTable (yang bergantung
+// pada backend.data.resources.tables) mungkin tidak menemukan tabel baru ketika
+// semua operasi AppSync-nya dimatikan via disableOperations.
+const gmRegion = Stack.of(groupManagerFn).region;
+const gmAccount = Stack.of(groupManagerFn).account;
+
+const groupTableArns = [
+  `arn:aws:dynamodb:${gmRegion}:${gmAccount}:table/SharedGroup-*`,
+  `arn:aws:dynamodb:${gmRegion}:${gmAccount}:table/SharedGroup-*/index/*`,
+  `arn:aws:dynamodb:${gmRegion}:${gmAccount}:table/GroupMember-*`,
+  `arn:aws:dynamodb:${gmRegion}:${gmAccount}:table/GroupMember-*/index/*`,
+];
+
+groupManagerFn.addToRolePolicy(
+  new iam.PolicyStatement({
+    actions: [
+      'dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem',
+      'dynamodb:DeleteItem', 'dynamodb:Query', 'dynamodb:Scan',
+      'dynamodb:BatchGetItem', 'dynamodb:BatchWriteItem', 'dynamodb:DescribeTable',
+    ],
+    resources: groupTableArns,
+  }),
+);
+
+// Lambda `ledger` perlu membaca GroupMember untuk checkGroupAccess
+ledgerFn.addToRolePolicy(
+  new iam.PolicyStatement({
+    actions: ['dynamodb:GetItem', 'dynamodb:Query', 'dynamodb:Scan', 'dynamodb:DescribeTable'],
+    resources: groupTableArns.filter((arn) => !arn.includes('SharedGroup')),
+  }),
+);
 
 // --- IAM SES untuk group-manager -------------------------------------------
 

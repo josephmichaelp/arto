@@ -25,6 +25,7 @@ import {
   GetCommand,
   PutCommand,
   QueryCommand,
+  ScanCommand,
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { randomUUID } from 'node:crypto';
@@ -183,40 +184,59 @@ async function getGroup(id: string): Promise<SharedGroupRecord | null> {
 }
 
 async function getGroupByOwnerSub(ownerSub: string): Promise<SharedGroupRecord | null> {
-  const r = await getDocClient().send(
-    new QueryCommand({
-      TableName: groupTable(),
-      IndexName: 'ownerSub-index',
-      KeyConditionExpression: 'ownerSub = :s',
-      ExpressionAttributeValues: { ':s': ownerSub },
-      Limit: 1,
-    }),
-  );
-  return (r.Items?.[0] as SharedGroupRecord | undefined) ?? null;
+  // Scan (bukan GSI Query) karena ownerSub tidak didefinisikan sebagai secondary index
+  // di skema. Untuk aplikasi personal dengan jumlah grup kecil ini sudah cukup.
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const r = await getDocClient().send(
+      new ScanCommand({
+        TableName: groupTable(),
+        FilterExpression: 'ownerSub = :s',
+        ExpressionAttributeValues: { ':s': ownerSub },
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+    const found = (r.Items as SharedGroupRecord[]).find((g) => g.status !== 'DISBANDED');
+    if (found) return found;
+    lastKey = r.LastEvaluatedKey;
+  } while (lastKey);
+  return null;
 }
 
 async function getMembersByGroup(groupId: string): Promise<GroupMemberRecord[]> {
-  const r = await getDocClient().send(
-    new QueryCommand({
-      TableName: memberTable(),
-      IndexName: 'groupId-index',
-      KeyConditionExpression: 'groupId = :g',
-      ExpressionAttributeValues: { ':g': groupId },
-    }),
-  );
-  return (r.Items as GroupMemberRecord[]) ?? [];
+  const items: GroupMemberRecord[] = [];
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const r = await getDocClient().send(
+      new ScanCommand({
+        TableName: memberTable(),
+        FilterExpression: 'groupId = :g',
+        ExpressionAttributeValues: { ':g': groupId },
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+    for (const item of r.Items ?? []) items.push(item as GroupMemberRecord);
+    lastKey = r.LastEvaluatedKey;
+  } while (lastKey);
+  return items;
 }
 
 async function getMembersByInviteeSub(inviteeSub: string): Promise<GroupMemberRecord[]> {
-  const r = await getDocClient().send(
-    new QueryCommand({
-      TableName: memberTable(),
-      IndexName: 'inviteeSub-index',
-      KeyConditionExpression: 'inviteeSub = :s',
-      ExpressionAttributeValues: { ':s': inviteeSub },
-    }),
-  );
-  return (r.Items as GroupMemberRecord[]) ?? [];
+  const items: GroupMemberRecord[] = [];
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const r = await getDocClient().send(
+      new ScanCommand({
+        TableName: memberTable(),
+        FilterExpression: 'inviteeSub = :s',
+        ExpressionAttributeValues: { ':s': inviteeSub },
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+    for (const item of r.Items ?? []) items.push(item as GroupMemberRecord);
+    lastKey = r.LastEvaluatedKey;
+  } while (lastKey);
+  return items;
 }
 
 async function getMember(id: string): Promise<GroupMemberRecord | null> {
