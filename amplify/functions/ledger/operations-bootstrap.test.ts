@@ -198,3 +198,73 @@ describe('bootstrapTablesFromEnv', () => {
       .toThrow(BootstrapError);
   });
 });
+
+describe('baris penjaga keunikan tidak bocor ke daftar', () => {
+  it('repo.list tidak mengembalikan item penjaga setelah penyiapan', async () => {
+    const { repo, run } = setup();
+    await run();
+
+    // Inilah akar galat "Cannot return null for non-nullable type: 'String'
+    // within parent 'Wallet' (/listWallets/items[1]/name)": kueri AppSync
+    // berbasis pemilik menyaring dengan `owner`, sehingga item penjaga yang
+    // memiliki `owner` ikut terbawa padahal tidak punya `name`.
+    const wallets = await repo.list('Wallet', OWNER);
+    const categories = await repo.list('Category', OWNER);
+
+    expect(wallets.some((w) => w.id.startsWith('UNIQ#'))).toBe(false);
+    expect(categories.some((c) => c.id.startsWith('UNIQ#'))).toBe(false);
+  });
+
+  it('setiap item yang terdaftar memiliki name, sesuai skema non-null', async () => {
+    const { repo, run } = setup();
+    await run();
+
+    for (const w of await repo.list('Wallet', OWNER)) {
+      expect(typeof w.name).toBe('string');
+    }
+    for (const c of await repo.list('Category', OWNER)) {
+      expect(typeof c.name).toBe('string');
+    }
+  });
+
+  it('item penjaga tetap ada di tabel sehingga keunikan terjaga', async () => {
+    const { repo, run } = setup();
+    await run();
+
+    const guards = repo.dump('Wallet').filter((w) => w.id.startsWith('UNIQ#'));
+    expect(guards.length).toBeGreaterThan(0);
+    await expect(
+      createWallet(repo, OWNER, { name: TUNAI_WALLET_NAME, initialBalance: 0 }, { newId: () => 'x' }),
+    ).rejects.toThrow(WalletCategoryOperationError);
+  });
+});
+
+describe('pembersihan baris penjaga lama', () => {
+  it('menghapus owner dari baris penjaga lama sehingga tidak lagi terdaftar', async () => {
+    const repo = new InMemoryLedgerRepo();
+    const { store } = makeStore();
+
+    // Baris penjaga versi lama: membawa owner, tanpa name.
+    await repo.put('Wallet', { id: `UNIQ#${OWNER}#WALLET#lama`, owner: OWNER } as never);
+    expect((await repo.list('Wallet', OWNER)).some((w) => w.id.startsWith('UNIQ#'))).toBe(true);
+
+    const result = await bootstrapUser(
+      repo,
+      OWNER,
+      { sub: SUB },
+      { store, tables: TABLES, newId: makeIdFactory() },
+    );
+
+    expect(result.guardsRepaired).toBeGreaterThan(0);
+    expect((await repo.list('Wallet', OWNER)).some((w) => w.id.startsWith('UNIQ#'))).toBe(false);
+    // Barisnya tidak dihapus, hanya kehilangan owner.
+    expect(repo.dump('Wallet').some((w) => w.id === `UNIQ#${OWNER}#WALLET#lama`)).toBe(true);
+  });
+
+  it('tidak melakukan apa pun bila tidak ada baris penjaga lama', async () => {
+    const { run } = setup();
+    await run();
+    const second = await run();
+    expect(second.guardsRepaired).toBe(0);
+  });
+});

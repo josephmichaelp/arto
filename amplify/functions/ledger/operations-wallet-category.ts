@@ -112,9 +112,25 @@ export function categoryGuardId(owner: string, type: CategoryType, nameKey: stri
   return `UNIQ#${owner}#${type}#${nameKey}`;
 }
 
-/** Membuat rekaman item penjaga keunikan (hanya `id` + `owner`). */
-function guardItem(id: string, owner: string): ItemRecord {
-  return { id, owner } as ItemRecord;
+/**
+ * Membuat rekaman item penjaga keunikan: HANYA `id`, tanpa `owner`.
+ *
+ * `owner` sengaja tidak disertakan. Item penjaga tinggal di tabel model yang
+ * sama dengan rekaman nyata, sehingga bila ia memiliki `owner` maka:
+ *
+ * 1. Kueri AppSync `listWallets`/`listCategories` (otorisasi berbasis pemilik
+ *    menyaring dengan `owner = <pengguna>`) ikut mengembalikannya, lalu
+ *    GraphQL gagal dengan "Cannot return null for non-nullable type: 'String'"
+ *    karena item penjaga tidak punya `name`.
+ * 2. `repo.list(entity, owner)` juga mengembalikannya, sehingga logika internal
+ *    Lambda melihat rekaman semu yang bukan Dompet/Kategori sungguhan.
+ *
+ * Tanpa `owner`, kedua jalur itu tidak lagi menemukannya. Keunikan tetap
+ * terjaga karena prasyaratnya `attribute_not_exists(id)` pada id deterministik
+ * yang sudah memuat owner di dalam nilainya (`UNIQ#<owner>#...`).
+ */
+function guardItem(id: string): ItemRecord {
+  return { id } as ItemRecord;
 }
 
 const NOT_EXISTS: Condition = { kind: 'notExists' };
@@ -192,7 +208,7 @@ export async function createWallet(
   };
 
   await runGuardedWrite(repo, [
-    { op: 'put', entity: 'Wallet', item: guardItem(walletGuardId(owner, nameKey), owner), condition: NOT_EXISTS },
+    { op: 'put', entity: 'Wallet', item: guardItem(walletGuardId(owner, nameKey)), condition: NOT_EXISTS },
     { op: 'put', entity: 'Wallet', item: record as unknown as ItemRecord, condition: NOT_EXISTS },
   ]);
 
@@ -238,7 +254,7 @@ export async function renameWallet(
 
   await runGuardedWrite(repo, [
     { op: 'delete', entity: 'Wallet', id: walletGuardId(owner, wallet.nameKey) },
-    { op: 'put', entity: 'Wallet', item: guardItem(walletGuardId(owner, newNameKey), owner), condition: NOT_EXISTS },
+    { op: 'put', entity: 'Wallet', item: guardItem(walletGuardId(owner, newNameKey)), condition: NOT_EXISTS },
     { op: 'update', entity: 'Wallet', id: wallet.id, set: { name, nameKey: newNameKey } },
   ]);
 
@@ -368,7 +384,7 @@ export async function createCategory(
     {
       op: 'put',
       entity: 'Category',
-      item: guardItem(categoryGuardId(owner, input.type, nameKey), owner),
+      item: guardItem(categoryGuardId(owner, input.type, nameKey)),
       condition: NOT_EXISTS,
     },
     { op: 'put', entity: 'Category', item: record as unknown as ItemRecord, condition: NOT_EXISTS },
@@ -418,7 +434,7 @@ export async function renameCategory(
     {
       op: 'put',
       entity: 'Category',
-      item: guardItem(categoryGuardId(owner, category.type, newNameKey), owner),
+      item: guardItem(categoryGuardId(owner, category.type, newNameKey)),
       condition: NOT_EXISTS,
     },
     { op: 'update', entity: 'Category', id: category.id, set: { name, nameKey: newNameKey } },

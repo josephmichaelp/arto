@@ -36,7 +36,7 @@ import {
   WalletCategoryOperationError,
   type IdFactory,
 } from './operations-wallet-category';
-import type { LedgerRepo } from './repository';
+import type { ItemRecord, LedgerRepo } from './repository';
 
 // --- Data bawaan ----------------------------------------------------------
 
@@ -163,6 +163,37 @@ function baseAttributes(typename: string, owner: string, nowIso: string): Record
   };
 }
 
+/**
+ * Membersihkan baris penjaga keunikan lama yang masih membawa `owner`.
+ *
+ * Baris penjaga tinggal di tabel model yang sama dengan rekaman nyata. Versi
+ * sebelumnya menuliskannya dengan `owner`, sehingga kueri AppSync
+ * `listWallets`/`listCategories` ikut mengembalikannya dan GraphQL gagal:
+ *
+ *     Cannot return null for non-nullable type: 'String'
+ *     within parent 'Wallet' (/listWallets/items[1]/name)
+ *
+ * Penulisan baru sudah tanpa `owner` (lihat `guardItem`), tetapi data yang
+ * sudah tersimpan perlu diperbaiki. Baris ditulis ulang dengan `id` saja,
+ * tanpa prasyarat, sehingga `owner` terhapus. Keunikan tidak terganggu karena
+ * barisnya tetap ada; yang hilang hanya atribut `owner`.
+ *
+ * Bersifat idempoten: setelah bersih, `repo.list` tidak lagi mengembalikan
+ * baris penjaga sehingga pemanggilan berikutnya tidak menemukan apa pun.
+ */
+async function repairLegacyGuards(repo: LedgerRepo, owner: string): Promise<number> {
+  let repaired = 0;
+  for (const entity of ['Wallet', 'Category'] as const) {
+    const rows = await repo.list(entity, owner);
+    for (const row of rows) {
+      if (!row.id.startsWith('UNIQ#')) continue;
+      await repo.put(entity, { id: row.id } as ItemRecord);
+      repaired += 1;
+    }
+  }
+  return repaired;
+}
+
 /** `true` bila galat berasal dari penjaga keunikan nama. */
 function isNameTaken(err: unknown): boolean {
   return err instanceof WalletCategoryOperationError && err.code === 'NAME_TAKEN';
@@ -195,6 +226,8 @@ export interface BootstrapResult {
   categoriesAlreadyPresent: number;
   /** `true` bila Dompet "Tunai" baru dibuat pada pemanggilan ini. */
   walletCreated: boolean;
+  /** Jumlah baris penjaga keunikan lama yang dibersihkan. */
+  guardsRepaired: number;
 }
 
 /**
@@ -216,6 +249,10 @@ export async function bootstrapUser(
   const tables = options.tables ?? bootstrapTablesFromEnv();
   const nowIso = (options.now ?? (() => new Date().toISOString()))();
   const displayName = (input.displayName ?? '').trim();
+
+  // Dibersihkan lebih dulu agar daftar Dompet/Kategori kembali dapat dibaca
+  // klien pada pemanggilan yang sama.
+  const guardsRepaired = await repairLegacyGuards(repo, owner);
 
   // UserProfile dan NotifPrefs — satu item per Pengguna (id = sub).
   await store.putIfAbsent(tables.profile, {
@@ -268,5 +305,5 @@ export async function bootstrapUser(
     if (!isNameTaken(err)) throw err;
   }
 
-  return { owner, categoriesCreated, categoriesAlreadyPresent, walletCreated };
+  return { owner, categoriesCreated, categoriesAlreadyPresent, walletCreated, guardsRepaired };
 }

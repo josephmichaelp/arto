@@ -21,7 +21,15 @@ import { loadAmplifyOutputs } from '../app/amplify';
 import { fromAwsJson, toAwsJson } from '../app/awsJson';
 import { getDataClient } from '../app/dataClient';
 
-const STORAGE_PREFIX = 'arto:bootstrap:';
+/**
+ * Awalan penanda, diberi versi.
+ *
+ * Versi dinaikkan ke `v2` agar penyiapan berjalan satu kali lagi pada semua
+ * perangkat yang sudah pernah menandainya selesai. Pemanggilan itu diperlukan
+ * untuk membersihkan baris penjaga keunikan lama yang membuat daftar Dompet
+ * dan Kategori gagal dibaca (lihat `repairLegacyGuards` di Lambda `ledger`).
+ */
+const STORAGE_PREFIX = 'arto:bootstrap:v2:';
 
 /** Kunci `localStorage` penanda penyiapan selesai untuk sebuah `sub`. */
 export function bootstrapDoneKey(sub: string): string {
