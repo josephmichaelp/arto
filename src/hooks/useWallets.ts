@@ -18,7 +18,12 @@ export function useWallets() {
     queryFn: async () => {
       if (!loadAmplifyOutputs()) return [];
       const client = getDataClient();
-      const { data, errors } = await client.models.Wallet.list();
+      // Item penjaga keunikan (UNIQ#...) tinggal di tabel yang sama dengan
+// rekaman nyata. Filter ttributeExists memastikannya tidak lolos ke
+// GraphQL type-checker yang akan menolak item tanpa field required.
+const { data, errors } = await client.models.Wallet.list({
+  filter: { name: { attributeExists: true } },
+});
       if (errors?.length) throw new Error(errors[0]?.message ?? 'Gagal memuat dompet');
       return data ?? [];
     },
