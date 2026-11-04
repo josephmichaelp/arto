@@ -30,7 +30,16 @@ async function callAiGateway<T>(mutationName: string, payload: Record<string, un
   // input wajib berupa string JSON: skalar AWSJSON menolak objek biasa.
   const { data, errors } = await fn({ input: toAwsJson(payload) });
   if (errors?.length) throw new Error(errors[0]?.message ?? `Gagal menjalankan ${mutationName}`);
-  return fromAwsJson<T>(data);
+
+  // Lambda ai-gateway juga mengembalikan amplop { ok: boolean, data?, error? }.
+  const parsed = fromAwsJson<{ ok: boolean; data?: unknown; error?: { message?: string } } | null>(data);
+  if (parsed !== null && typeof parsed === 'object' && 'ok' in (parsed as object)) {
+    const env = parsed as { ok: boolean; error?: { message?: string } };
+    if (!env.ok) {
+      throw new Error(env.error?.message ?? `Operasi AI ${mutationName} gagal`);
+    }
+  }
+  return parsed as T;
 }
 
 // ---------------------------------------------------------------------------

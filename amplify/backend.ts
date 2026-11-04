@@ -183,6 +183,30 @@ ledgerFn.addToRolePolicy(
   }),
 );
 
+// Variabel lingkungan nama tabel grup.
+// Setelah grantTable diganti dengan explicit PolicyStatement di atas,
+// addEnvironment tidak lagi dipanggil otomatis, jadi perlu di-set manual.
+// Referensi tabel dari backend.data.resources.tables digunakan bila tersedia
+// (token CDK mengisi nilai yang benar saat sintesis/deploy).
+{
+  const sharedGroupTbl = tables['SharedGroup' as keyof typeof tables];
+  const groupMemberTbl = tables['GroupMember' as keyof typeof tables];
+  if (sharedGroupTbl) {
+    groupManagerFn.addEnvironment('SHARED_GROUP_TABLE_NAME', sharedGroupTbl.tableName);
+  } else {
+    // Fallback: nama tabel Amplify Gen2 mengikuti pola ModelName-AppId-BranchHash.
+    // Nilai ini tidak dapat dikodekan keras; deploy akan tetap gagal bila referensi
+    // CDK tidak tersedia. Pastikan model SharedGroup terdaftar di skema.
+    console.warn('[backend.ts] PERHATIAN: tabel SharedGroup tidak ditemukan via backend.data.resources.tables');
+  }
+  if (groupMemberTbl) {
+    groupManagerFn.addEnvironment('GROUP_MEMBER_TABLE_NAME', groupMemberTbl.tableName);
+    ledgerFn.addEnvironment('GROUP_MEMBER_TABLE_NAME', groupMemberTbl.tableName);
+  } else {
+    console.warn('[backend.ts] PERHATIAN: tabel GroupMember tidak ditemukan via backend.data.resources.tables');
+  }
+}
+
 // --- IAM SES untuk group-manager -------------------------------------------
 
 groupManagerFn.addToRolePolicy(

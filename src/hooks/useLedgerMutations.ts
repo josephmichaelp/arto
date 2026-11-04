@@ -29,10 +29,21 @@ async function callLedger<T>(mutationName: string, payload: Record<string, unkno
     | undefined;
   if (!fn) throw new Error(`Mutasi ${mutationName} tidak ditemukan pada klien`);
 
-  // input wajib berupa string JSON: skalar AWSJSON menolak objek biasa.
+  // `input` wajib berupa string JSON: skalar AWSJSON menolak objek biasa.
   const { data, errors } = await fn({ input: toAwsJson(payload) });
   if (errors?.length) throw new Error(errors[0]?.message ?? `Gagal menjalankan ${mutationName}`);
-  return fromAwsJson<T>(data);
+
+  // Lambda mengembalikan amplop { ok: boolean, data?, error? }.
+  // Bila ok === false, lempar sebagai exception agar try/catch di halaman
+  // bisa menampilkan pesan galat dan mencegah onSuccess memicu secara salah.
+  const parsed = fromAwsJson<{ ok: boolean; data?: unknown; error?: { code?: string; message?: string } } | null>(data);
+  if (parsed !== null && typeof parsed === 'object' && 'ok' in (parsed as object)) {
+    const env = parsed as { ok: boolean; error?: { message?: string } };
+    if (!env.ok) {
+      throw new Error(env.error?.message ?? `Operasi ${mutationName} gagal`);
+    }
+  }
+  return parsed as T;
 }
 
 // ---------------------------------------------------------------------------
