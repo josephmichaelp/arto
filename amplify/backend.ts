@@ -144,11 +144,15 @@ grantTable(weeklyInsightFn, 'Notification', 'rw');
 
 // Lambda `ai-gateway`: membangun konteks `askAssistant` dari data Pengguna
 // (baca) dan menulis struk tidak mengubah tabel aplikasi.
+// createLedgerRepo() membaca SEMUA 7 TABLE_NAME env var saat init,
+// jadi seluruh tabel perlu di-grant meski tidak semua dibaca secara aktual.
 grantTable(aiGatewayFn, 'Transaction', 'r');
 grantTable(aiGatewayFn, 'Category', 'r');
 grantTable(aiGatewayFn, 'Budget', 'r');
 grantTable(aiGatewayFn, 'Wallet', 'r');
 grantTable(aiGatewayFn, 'Goal', 'r');
+grantTable(aiGatewayFn, 'RecurringRule', 'r');
+grantTable(aiGatewayFn, 'Notification', 'r');
 
 // Lambda `group-manager`: akses eksplisit ke tabel SharedGroup dan GroupMember.
 // Menggunakan IAM PolicyStatement dengan wildcard karena grantTable (yang bergantung
