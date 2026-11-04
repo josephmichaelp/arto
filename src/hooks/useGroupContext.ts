@@ -92,10 +92,16 @@ export function useGroupContext(): UseGroupContextResult {
       if (!fn) return null;
       const { data, errors } = await fn({ input: toAwsJson({}) });
       if (errors?.length) return null;
-      return fromAwsJson<{
-        ownedGroupId: string | null;
-        groups: Array<{ groupId: string; groupName: string; role: GroupRole; isOwner: boolean }>;
+      // Lambda mengembalikan amplop { ok, data: { ownedGroupId, groups } }.
+      // Unwrap di sini agar rawCtx langsung berisi { ownedGroupId, groups }.
+      const envelope = fromAwsJson<{
+        ok: boolean;
+        data?: {
+          ownedGroupId: string | null;
+          groups: Array<{ groupId: string; groupName: string; role: GroupRole; isOwner: boolean }>;
+        };
       } | null>(data);
+      return envelope?.ok ? (envelope.data ?? null) : null;
     },
     staleTime: 60 * 1000,
   });
@@ -273,8 +279,9 @@ export function useGroupMembers(groupId: string | null) {
       if (!fn) return [];
       const { data, errors } = await fn({ input: toAwsJson({ groupId }) });
       if (errors?.length) throw new Error(errors[0]?.message ?? 'Gagal memuat anggota');
-      const result = fromAwsJson<{ members: GroupMemberDetail[] }>(data);
-      return result?.members ?? [];
+      // Unwrap amplop { ok, data: { members } }
+      const envelope = fromAwsJson<{ ok: boolean; data?: { members: GroupMemberDetail[] } } | null>(data);
+      return (envelope?.ok ? envelope.data?.members : null) ?? [];
     },
     staleTime: 30 * 1000,
   });
