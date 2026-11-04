@@ -32,12 +32,16 @@ async function callAiGateway<T>(mutationName: string, payload: Record<string, un
   if (errors?.length) throw new Error(errors[0]?.message ?? `Gagal menjalankan ${mutationName}`);
 
   // Lambda ai-gateway juga mengembalikan amplop { ok: boolean, data?, error? }.
-  const parsed = fromAwsJson<{ ok: boolean; data?: unknown; error?: { message?: string } } | null>(data);
+  // Unwrap amplop: kembalikan hanya data bukan seluruh envelope,
+  // sama seperti callGroupManager. Tanpa unwrap, data.text selalu undefined
+  // karena text sebenarnya ada di data.data.text.
+  const parsed = fromAwsJson<{ ok: boolean; data?: T; error?: { message?: string } } | null>(data);
   if (parsed !== null && typeof parsed === 'object' && 'ok' in (parsed as object)) {
-    const env = parsed as { ok: boolean; error?: { message?: string } };
+    const env = parsed as { ok: boolean; data?: T; error?: { message?: string } };
     if (!env.ok) {
       throw new Error(env.error?.message ?? `Operasi AI ${mutationName} gagal`);
     }
+    return env.data as T;
   }
   return parsed as T;
 }
