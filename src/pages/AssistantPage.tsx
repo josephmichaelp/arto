@@ -273,7 +273,11 @@ export function AssistantPage() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100dvh',
+        // Gunakan minHeight 0 + flex: 1 (bukan height 100dvh) agar halaman
+        // mengisi ruang yang tersedia di dalam AuthenticatedLayout tanpa
+        // melampaui viewport dan menyebabkan tampilan kosong di iOS.
+        flex: 1,
+        minHeight: 0,
         overflow: 'hidden',
       }}
     >
