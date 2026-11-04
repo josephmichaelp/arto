@@ -123,7 +123,7 @@ function CreateGroupSection() {
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Mis. Keluarga Budi"
+        placeholder="E.g. Family Budget"
         maxLength={60}
         style={{ ...INPUT_STYLE, marginBottom: 12 }}
         onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
@@ -292,7 +292,7 @@ function InviteForm({ groupId, memberCount }: { groupId: string; memberCount: nu
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="email@contoh.com"
+          placeholder="email@example.com"
           style={{ ...INPUT_STYLE, flex: '1 1 200px' }}
           onKeyDown={(e) => { if (e.key === 'Enter') handleInvite(); }}
         />
@@ -332,7 +332,7 @@ function InviteForm({ groupId, memberCount }: { groupId: string; memberCount: nu
 // ---------------------------------------------------------------------------
 
 export function GroupPage() {
-  const { context, groups } = useGroupContext();
+  const { context, groups, isLoading: contextLoading } = useGroupContext();
   const activeGroupId = groups.find((g) => g.isOwner)?.groupId ?? groups[0]?.groupId ?? null;
   const myRole = groups.find((g) => g.groupId === activeGroupId)?.role ?? null;
   const isOwner = myRole === 'OWNER';
@@ -344,11 +344,24 @@ export function GroupPage() {
 
   const activeMembers = (members ?? []).filter((m) => m.status === 'ACTIVE');
 
-  // Belum punya grup
+  // Masih memuat data keanggotaan — jangan tampilkan form "Create Group" dulu
+  // agar tidak ada flash yang menipu pengguna (terutama co-owner yang baru accept)
+  if (contextLoading) {
+    return (
+      <div style={{ paddingBottom: 40 }}>
+        <LargeTitle title="Group Finance" />
+        <div style={{ padding: '24px 16px 0', color: 'var(--color-ink-muted, #6b7280)', fontSize: 14, textAlign: 'center' }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  // Belum punya grup dan bukan anggota grup mana pun
   if (groups.length === 0) {
     return (
       <div style={{ paddingBottom: 40 }}>
-        <LargeTitle title="Grup Keuangan" />
+        <LargeTitle title="Group Finance" />
         <div style={{ padding: '8px 16px 0' }}>
           <CreateGroupSection />
         </div>
@@ -361,7 +374,7 @@ export function GroupPage() {
 
   return (
     <div style={{ paddingBottom: 40 }}>
-      <LargeTitle title="Grup Keuangan" />
+      <LargeTitle title="Group Finance" />
       <div style={{ padding: '8px 16px 0', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Info Grup */}
@@ -372,7 +385,7 @@ export function GroupPage() {
               {groupInfo?.groupName ?? '–'}
             </p>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--color-ink-muted, #6b7280)' }}>
-              {activeMembers.length} dari 5 anggota aktif · Peran kamu: {ROLE_LABEL[myRole ?? ''] ?? '–'}
+              {activeMembers.length} dari 5 active members · Your role: {ROLE_LABEL[myRole ?? ''] ?? '–'}
             </p>
           </SoftCard>
         </section>
@@ -416,7 +429,7 @@ export function GroupPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!confirm('Keluar dari grup ini?')) return;
+                  if (!confirm('Leave this group?')) return;
                   leave.mutate(
                     { groupId: activeGroupId! },
                     {
@@ -435,7 +448,7 @@ export function GroupPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!confirm('Bubarkan grup ini? Semua anggota akan dikeluarkan.')) return;
+                  if (!confirm('Disband this group? All members will be removed.')) return;
                   disband.mutate(
                     { groupId: activeGroupId! },
                     {
