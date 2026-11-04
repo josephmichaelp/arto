@@ -118,6 +118,24 @@ export interface LedgerHandlerDeps {
 
 // --- Util -----------------------------------------------------------------
 
+/**
+ * Menormalkan ID entitas dalam payload sehingga selalu tersedia di `input.id`.
+ *
+ * Halaman frontend mengirim nama field spesifik entitas (`walletId`, `categoryId`,
+ * `ruleId`, `goalId`) sementara operasi Lambda selalu membaca `input.id`.
+ * Normalisasi ini dilakukan di satu titik agar tidak perlu mengubah seluruh halaman.
+ */
+function normalizeEntityId(raw: Record<string, unknown>): Record<string, unknown> {
+  if (raw.id) return raw; // sudah ada, tidak perlu normalisasi
+  const entityId =
+    raw.walletId ??
+    raw.categoryId ??
+    raw.ruleId ??
+    raw.goalId ??
+    raw.memberId;
+  return entityId ? { ...raw, id: entityId } : raw;
+}
+
 function fieldNameOf(event: LedgerResolverEvent): string | undefined {
   const name = event.info?.fieldName ?? event.fieldName ?? undefined;
   return name ? String(name) : undefined;
@@ -246,7 +264,7 @@ export async function dispatchLedgerOperation(
 
   const { repo, newId } = deps;
   const loadPrefs = deps.loadPrefs ?? defaultPrefsLoader;
-  const input = parseInput(event.arguments?.input);
+  const input = normalizeEntityId(parseInput(event.arguments?.input));
 
   // Pemuatan NotifPrefs malas + dipakai-ulang (hanya operasi ber-Notifikasi).
   let prefsLoaded = false;
