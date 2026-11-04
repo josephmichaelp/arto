@@ -20,9 +20,9 @@ import type { GroupRole } from '../hooks/useGroupContext';
 const SESSION_KEY = 'arto:pending-invite-token';
 
 const ROLE_LABEL: Record<GroupRole, string> = {
-  OWNER: 'Pemilik',
-  CO_OWNER: 'Ko-Pemilik (dapat mencatat dan mengubah data)',
-  VIEWER: 'Penonton (hanya dapat melihat data)',
+  OWNER: 'Owner',
+  CO_OWNER: 'Co-Owner (can record and edit data)',
+  VIEWER: 'Viewer (read-only)',
 };
 
 /**

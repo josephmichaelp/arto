@@ -157,9 +157,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const ROLE_LABEL: Record<string, string> = {
-  OWNER: 'Pemilik',
-  CO_OWNER: 'Ko-Pemilik',
-  VIEWER: 'Penonton',
+  OWNER: 'Owner',
+  CO_OWNER: 'Co-Owner',
+  VIEWER: 'Viewer',
 };
 
 // ---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ function MemberRow({
           <div style={{ display: 'flex', gap: 6 }}>
             <button
               type="button"
-              title={member.role === 'CO_OWNER' ? 'Jadikan Penonton' : 'Jadikan Ko-Pemilik'}
+              title={member.role === 'CO_OWNER' ? 'Change to Viewer' : 'Change to Co-Owner'}
               onClick={() => {
                 setErr(null);
                 updateRole.mutate(
@@ -217,7 +217,7 @@ function MemberRow({
               }}
               style={{ ...BTN_GHOST, padding: '0 12px', fontSize: 13 }}
             >
-              {member.role === 'CO_OWNER' ? '→ Penonton' : '→ Ko-Pemilik'}
+              {member.role === 'CO_OWNER' ? '→ Viewer' : '→ Co-Owner'}
             </button>
             <button
               type="button"
@@ -301,8 +301,8 @@ function InviteForm({ groupId, memberCount }: { groupId: string; memberCount: nu
           onChange={(e) => setRole(e.target.value as 'CO_OWNER' | 'VIEWER')}
           style={{ ...INPUT_STYLE, flex: '0 1 160px' }}
         >
-          <option value="CO_OWNER">Ko-Pemilik</option>
-          <option value="VIEWER">Penonton</option>
+          <option value="CO_OWNER">Co-Owner</option>
+          <option value="VIEWER">Viewer</option>
         </select>
         <button
           type="button"

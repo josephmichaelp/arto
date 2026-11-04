@@ -218,7 +218,7 @@ export function AuthenticatedLayout() {
                 <div>
                   <p style={{ margin: 0 }}>{g.groupName}</p>
                   <p style={{ margin: 0, fontSize: 12, color: 'var(--color-ink-muted, #6b7280)' }}>
-                    {g.role === 'OWNER' ? 'Pemilik' : g.role === 'CO_OWNER' ? 'Ko-Pemilik' : 'Penonton'}
+                    {g.role === 'OWNER' ? 'Owner' : g.role === 'CO_OWNER' ? 'Co-Owner' : 'Viewer'}
                   </p>
                 </div>
                 {context.groupId === g.groupId && <span style={{ marginLeft: 'auto', fontSize: 18 }}>✓</span>}

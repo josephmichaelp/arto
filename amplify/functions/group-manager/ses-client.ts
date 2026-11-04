@@ -37,8 +37,8 @@ export interface SendInvitationParams {
 }
 
 const ROLE_LABEL: Record<InviteRole, string> = {
-  CO_OWNER: 'Ko-Pemilik (dapat mencatat dan mengubah data)',
-  VIEWER: 'Penonton (hanya dapat melihat data)',
+  CO_OWNER: 'Co-Owner (can record and edit data)',
+  VIEWER: 'Viewer (read-only)',
 };
 
 /**
